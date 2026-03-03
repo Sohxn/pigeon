@@ -3,6 +3,7 @@ from flask_cors import CORS
 from config import Config
 from services.gmail_service import GmailService
 from services.supa_auth import SupabaseService
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -183,7 +184,7 @@ def send_email():
             subject=data['subject'],
             body=data['body']
         )
-        
+         
         return jsonify(result)
         
     except Exception as e:
