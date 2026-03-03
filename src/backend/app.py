@@ -25,8 +25,6 @@ def health():
     return jsonify({'status': 'healthy', 'service': 'pigeon-backend'})
 
 
-
-
 # production endpoints
 
 #callback during auth 
