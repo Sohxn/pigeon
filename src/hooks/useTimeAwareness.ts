@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import { Email, UrgencyLevel } from "@/types/email";
 import { differenceInHours, differenceInMinutes, isPast } from "date-fns";
 
+
+//REWRITE THIS ENTIRE LOGIC BECAUSE types DOESNT MAKE SENSE ANYMORE
+
+
 // How long since the last activity on this email
 export function getSilenceDuration(email: Email): string {
   const lastActive = email.lastActivity || email.date;
