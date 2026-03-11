@@ -1,9 +1,3 @@
-import { Email, EmailType } from "@/types/email";
-import { Star, Clock, AlertTriangle } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { format, isToday, isYesterday } from "date-fns";
-import { getUrgency, getSilenceDuration } from "@/hooks/useTimeAwareness";
-
 import { formatDistanceToNow } from "date-fns";
 
 interface EmailListItemProps {
@@ -52,7 +46,7 @@ export default function EmailListItem({ email, isSelected, onClick }: EmailListI
       </div>
 
       <div className="text-xs text-muted-foreground truncate">
-        {email.snippet}
+        {email.snippet || "No preview available"}
       </div>
 
       {/* Show which account this email is from */}

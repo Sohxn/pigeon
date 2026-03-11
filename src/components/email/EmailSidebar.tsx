@@ -12,6 +12,7 @@ import {
   ExternalLink,
   Settings,
 } from "lucide-react";
+
 interface FolderCount {
   inbox: number;
   starred: number;
@@ -47,7 +48,13 @@ interface EmailSidebarProps {
   folderCounts: FolderCount;
 }
 
-export default function EmailSidebar({ activeFolder, onFolderChange, onCompose, onOpenSettings, folderCounts }: EmailSidebarProps) {
+export default function EmailSidebar({ 
+  activeFolder, 
+  onFolderChange, 
+  onCompose, 
+  onOpenSettings, 
+  folderCounts 
+}: EmailSidebarProps) {
   const navigate = useNavigate();
 
   return (
@@ -58,7 +65,7 @@ export default function EmailSidebar({ activeFolder, onFolderChange, onCompose, 
           <div className="w-8 h-8 bg-foreground rounded-md flex items-center justify-center">
             <Command className="w-4 h-4 text-background" />
           </div>
-          <span className="font-semibold tracking-tight">swiftmail</span>
+          <span className="font-semibold tracking-tight">Pigeon Mail</span>
         </div>
       </div>
 
@@ -108,7 +115,7 @@ export default function EmailSidebar({ activeFolder, onFolderChange, onCompose, 
         })}
       </nav>
 
-      {/* Settings & Landing Page */}
+      {/* Settings & Dashboard */}
       <div className="px-3 pb-2 space-y-1">
         <button
           onClick={onOpenSettings}
@@ -118,25 +125,12 @@ export default function EmailSidebar({ activeFolder, onFolderChange, onCompose, 
           Settings
         </button>
         <button
-          onClick={() => navigate("/landing")}
+          onClick={() => navigate("/dashboard")}
           className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:bg-secondary/50 rounded-md transition-colors"
         >
           <ExternalLink className="w-4 h-4" />
-          View Landing Page
+          Accounts
         </button>
-      </div>
-
-      {/* Account Section */}
-      <div className="p-3 border-t border-border">
-        <div className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-secondary/50 transition-colors cursor-pointer">
-          <div className="w-8 h-8 rounded-full bg-foreground text-background flex items-center justify-center text-xs font-medium">
-            JD
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">John Doe</p>
-            <p className="text-xs text-muted-foreground truncate">john@example.com</p>
-          </div>
-        </div>
       </div>
     </aside>
   );

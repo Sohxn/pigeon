@@ -1,6 +1,5 @@
 import { format } from "date-fns";
 import { useMarkAsRead, useToggleStar, useArchiveEmail } from "@/hooks/useEmails";
-// import { Button } from "@/components/ui/button";
 import { Star, Archive, Trash2 } from "lucide-react";
 import { useEffect } from "react";
 
@@ -29,7 +28,7 @@ export default function EmailView({ email }: EmailViewProps) {
     if (!email.is_read) {
       markAsRead.mutate(email.id);
     }
-  }, [email.id, email.is_read]);
+  }, [email.id, email.is_read, markAsRead]);
 
   return (
     <div className="h-full flex flex-col">
@@ -41,23 +40,26 @@ export default function EmailView({ email }: EmailViewProps) {
           </h1>
           
           <div className="flex gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
+            <button
               onClick={() => toggleStar.mutate({ emailId: email.id, isStarred: email.is_starred })}
+              className="p-2 hover:bg-secondary rounded-md transition-colors"
+              title={email.is_starred ? "Unstar" : "Star"}
             >
               <Star className={`w-4 h-4 ${email.is_starred ? 'fill-yellow-500 text-yellow-500' : ''}`} />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
+            </button>
+            <button
               onClick={() => archiveEmail.mutate(email.id)}
+              className="p-2 hover:bg-secondary rounded-md transition-colors"
+              title="Archive"
             >
               <Archive className="w-4 h-4" />
-            </Button>
-            <Button variant="ghost" size="sm">
+            </button>
+            <button 
+              className="p-2 hover:bg-secondary rounded-md transition-colors"
+              title="Delete"
+            >
               <Trash2 className="w-4 h-4" />
-            </Button>
+            </button>
           </div>
         </div>
 
@@ -78,7 +80,7 @@ export default function EmailView({ email }: EmailViewProps) {
         </div>
       </div>
 
-      {/* EMAIL BODY (PRE FORMATTED TEXT WE WONT TOUCH THAT FR) */}
+      {/* Body */}
       <div className="flex-1 overflow-y-auto p-6">
         {email.body_html ? (
           <div 
