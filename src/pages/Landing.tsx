@@ -9,18 +9,22 @@ const Landing = () => {
       <header className="flex items-center justify-between p-6 max-w-6xl mx-auto">
         <h1 className="text-xl font-bold">MailApp</h1>
         <div className="flex gap-3">
+
+          {/* login route */}
           <button
-            onClick={() => navigate("/")}
-            className="px-4 py-2 text-sm border border-border rounded-md hover:bg-secondary transition-colors"
-          >
+            onClick={() => navigate("/login")}
+            className="px-4 py-2 text-sm border border-border rounded-md hover:bg-secondary transition-colors">
             Log in
           </button>
+
+          {/* signup route */}
           <button
-            onClick={() => navigate("/")}
-            className="px-4 py-2 text-sm bg-foreground text-background rounded-md hover:opacity-90 transition-colors"
-          >
+            onClick={() => navigate("/signup")}
+            className="px-4 py-2 text-sm bg-foreground text-background rounded-md hover:opacity-90 transition-colors">
             Sign up
           </button>
+
+
         </div>
       </header>
 

@@ -5,13 +5,14 @@ const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
 const API_URL = import.meta.env.VITE_FLASK_API_URL;
 
 const SCOPES = [
+  'openid',
   'https://www.googleapis.com/auth/gmail.readonly',
   'https://www.googleapis.com/auth/gmail.modify',
   'https://www.googleapis.com/auth/gmail.compose',
   'https://www.googleapis.com/auth/gmail.send',
   'https://www.googleapis.com/auth/gmail.labels',
   'https://www.googleapis.com/auth/userinfo.email',
-].join(' ');
+].join(' '); 
 
 export function initiateGmailAuth() {
   const authUrl = 
@@ -34,6 +35,13 @@ export async function handleGmailCallback(code: string): Promise<boolean> {
       throw new Error('User not authenticated');
     }
     
+    // debugging
+    console.log('📤 Sending to backend:', {
+      code: code.substring(0, 20) + '...',
+      user_id: user.id, 
+      api_url: API_URL
+    });
+
     const response = await fetch(`${API_URL}/api/gmail/oauth/callback`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -42,8 +50,14 @@ export async function handleGmailCallback(code: string): Promise<boolean> {
         user_id: user.id 
       })
     });
-    
+
+
+    console.log('📥 Backend response status:', response.status);
+     
     const result = await response.json();
+    console.log('📥 Backend response:', result);
+
+
     return result.success;
   } catch (error) {
     console.error('Gmail OAuth error:', error);

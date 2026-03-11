@@ -19,7 +19,7 @@ export default function AuthCallback() {
       handleGmailCallback(code)
         .then((success) => {
           if (success) {
-            navigate('/dashboard');
+            navigate('/dashboard'); 
           } else {
             navigate('/dashboard');
           }

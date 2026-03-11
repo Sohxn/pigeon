@@ -9,6 +9,7 @@ import re
 from email.utils import parsedate_to_datetime
 from html2text import html2text
 
+
 class GmailService:
     def __init__(self, client_id, client_secret, redirect_uri):
         self.client_id = client_id
@@ -17,6 +18,12 @@ class GmailService:
     
     def exchange_code_for_tokens(self, auth_code):
         """Exchange authorization code for access + refresh tokens"""
+
+        print(f"~Backend redirect_uri: {self.redirect_uri}")
+        print(f"~Backend client_id: {self.client_id}")
+        print(f"~Auth code received: {auth_code[:20]}...")
+
+
         flow = Flow.from_client_config(
             {
                 "web": {
@@ -27,7 +34,12 @@ class GmailService:
                     "token_uri": "https://oauth2.googleapis.com/token",
                 }
             },
+
+
+            #updated scopes
+            #added openid
             scopes=[
+                'openid',
                 'https://www.googleapis.com/auth/gmail.readonly',
                 'https://www.googleapis.com/auth/gmail.modify',
                 'https://www.googleapis.com/auth/gmail.compose',
@@ -36,21 +48,31 @@ class GmailService:
                 'https://www.googleapis.com/auth/userinfo.email',
             ]
         )
+        
+
         flow.redirect_uri = self.redirect_uri
+
+        print(f"~Flow redirect_uri: {flow.redirect_uri}")
         
-        flow.fetch_token(code=auth_code)
-        credentials = flow.credentials
-        
-        # Get user's email
-        service = build('gmail', 'v1', credentials=credentials)
-        profile = service.users().getProfile(userId='me').execute()
-        
-        return {
-            'access_token': credentials.token,
-            'refresh_token': credentials.refresh_token,
-            'token_expiry': credentials.expiry.isoformat() if credentials.expiry else None,
-            'gmail_email': profile['emailAddress']
-        }
+        try:
+            flow.fetch_token(code=auth_code)
+            credentials = flow.credentials
+            
+            # Get user's email
+            service = build('gmail', 'v1', credentials=credentials)
+            profile = service.users().getProfile(userId='me').execute()
+            
+            return {
+                'access_token': credentials.token,
+                'refresh_token': credentials.refresh_token,
+                'token_expiry': credentials.expiry.isoformat() if credentials.expiry else None,
+                'gmail_email': profile['emailAddress']
+            }
+        except Exception as e:
+            print(f"!!! Token exchange error: {e}")
+            raise
+
+
     
     def get_gmail_service(self, access_token, refresh_token):
         """Create Gmail API service"""
