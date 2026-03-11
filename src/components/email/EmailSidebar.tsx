@@ -11,6 +11,8 @@ import {
   Command,
   ExternalLink,
   Settings,
+  Mail,
+  ChevronRight,
 } from "lucide-react";
 
 interface FolderCount {
@@ -20,6 +22,13 @@ interface FolderCount {
   drafts: number;
   archive: number;
   trash: number;
+}
+
+interface EmailAccount {
+  id: string;
+  email_address: string;
+  provider: string;
+  is_primary: boolean;
 }
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -46,6 +55,9 @@ interface EmailSidebarProps {
   onCompose: () => void;
   onOpenSettings: () => void;
   folderCounts: FolderCount;
+  accounts: EmailAccount[];
+  selectedAccountId: string | null;
+  onAccountChange: (accountId: string | null) => void;
 }
 
 export default function EmailSidebar({ 
@@ -53,7 +65,10 @@ export default function EmailSidebar({
   onFolderChange, 
   onCompose, 
   onOpenSettings, 
-  folderCounts 
+  folderCounts,
+  accounts,
+  selectedAccountId,
+  onAccountChange
 }: EmailSidebarProps) {
   const navigate = useNavigate();
 
@@ -67,6 +82,52 @@ export default function EmailSidebar({
           </div>
           <span className="font-semibold tracking-tight">Pigeon Mail</span>
         </div>
+      </div>
+
+      {/* Account Selector */}
+      <div className="border-b border-border p-3">
+        <div className="text-xs font-medium text-muted-foreground mb-2 px-1">ACCOUNTS</div>
+        
+        {/* All Accounts */}
+        <button
+          onClick={() => onAccountChange(null)}
+          className={cn(
+            "w-full flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors mb-1",
+            selectedAccountId === null
+              ? "bg-secondary text-foreground"
+              : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+          )}
+        >
+          <div className="flex items-center gap-2 min-w-0">
+            <Mail className="w-4 h-4 flex-shrink-0" />
+            <span className="truncate">All Accounts</span>
+          </div>
+          {selectedAccountId === null && <ChevronRight className="w-3 h-3 flex-shrink-0" />}
+        </button>
+
+        {/* Individual Accounts */}
+        {accounts.map((account) => (
+          <button
+            key={account.id}
+            onClick={() => onAccountChange(account.id)}
+            className={cn(
+              "w-full flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors mb-1",
+              selectedAccountId === account.id
+                ? "bg-secondary text-foreground"
+                : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+            )}
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-4 h-4 rounded-full bg-foreground/20 flex items-center justify-center flex-shrink-0">
+                <span className="text-[8px] font-bold">
+                  {account.email_address[0].toUpperCase()}
+                </span>
+              </div>
+              <span className="truncate text-xs">{account.email_address}</span>
+            </div>
+            {selectedAccountId === account.id && <ChevronRight className="w-3 h-3 flex-shrink-0" />}
+          </button>
+        ))}
       </div>
 
       {/* Compose Button */}
@@ -129,7 +190,7 @@ export default function EmailSidebar({
           className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:bg-secondary/50 rounded-md transition-colors"
         >
           <ExternalLink className="w-4 h-4" />
-          Accounts
+          Manage Accounts
         </button>
       </div>
     </aside>

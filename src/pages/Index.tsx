@@ -8,13 +8,42 @@ import EmailListItem from "@/components/email/EmailListItem";
 import EmailView from "@/components/email/EmailView";
 import { RefreshCw } from "lucide-react";
 
+interface EmailAccount {
+  id: string;
+  email_address: string;
+  provider: string;
+  is_primary: boolean;
+}
+
 export default function Index() {
   const navigate = useNavigate();
   const [selectedEmailId, setSelectedEmailId] = useState<string | null>(null);
   const [activeFolder, setActiveFolder] = useState("inbox");
+  const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null); // null = All Accounts
+  const [accounts, setAccounts] = useState<EmailAccount[]>([]);
   
-  const { data: emails = [], isLoading, error } = useEmails();
+  const { data: allEmails = [], isLoading, error } = useEmails();
   const syncEmails = useSyncEmails();
+
+  // Load user's email accounts
+  useEffect(() => {
+    loadAccounts();
+  }, []);
+
+  const loadAccounts = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data } = await supabase
+      .from('email_accounts')
+      .select('id, email_address, provider, is_primary')
+      .eq('user_id', user.id)
+      .order('is_primary', { ascending: false });
+
+    if (data) {
+      setAccounts(data);
+    }
+  };
 
   // Check auth
   useEffect(() => {
@@ -24,6 +53,11 @@ export default function Index() {
       }
     });
   }, [navigate]);
+
+  // Filter emails by selected account
+  const emails = selectedAccountId 
+    ? allEmails.filter(e => e.account_id === selectedAccountId)
+    : allEmails;
 
   // Handle sync
   const handleSync = () => {
@@ -36,7 +70,7 @@ export default function Index() {
 
   const selectedEmail = emails.find(e => e.id === selectedEmailId);
 
-  // Auto-select first email when emails load
+  // Auto-select first email when emails change
   useEffect(() => {
     if (emails.length > 0 && !selectedEmailId) {
       setSelectedEmailId(emails[0].id);
@@ -73,11 +107,16 @@ export default function Index() {
   const folderCounts = {
     inbox: emails.filter(e => !e.is_archived && !e.is_trashed && !e.is_read).length,
     starred: emails.filter(e => e.is_starred && !e.is_trashed).length,
-    sent: 0, // Not implemented yet
-    drafts: 0, // Not implemented yet
+    sent: 0,
+    drafts: 0,
     archive: emails.filter(e => e.is_archived && !e.is_trashed).length,
     trash: emails.filter(e => e.is_trashed).length,
   };
+
+  // Get selected account name
+  const selectedAccountName = selectedAccountId
+    ? accounts.find(a => a.id === selectedAccountId)?.email_address
+    : "All Accounts";
 
   return (
     <div className="h-screen flex bg-background">
@@ -88,13 +127,19 @@ export default function Index() {
         onCompose={() => toast.info("Compose not yet implemented")}
         onOpenSettings={() => toast.info("Settings not yet implemented")}
         folderCounts={folderCounts}
+        accounts={accounts}
+        selectedAccountId={selectedAccountId}
+        onAccountChange={setSelectedAccountId}
       />
 
       {/* Email List */}
       <div className="w-96 border-r border-border flex flex-col">
-        {/* Header with sync button */}
-        <div className="h-14 border-b border-border p-4 flex items-center justify-between">
-          <h1 className="text-sm font-semibold">Inbox ({emails.length})</h1>
+        {/* Header with account name and sync button */}
+        <div className="h-14 border-b border-border px-4 flex items-center justify-between">
+          <div>
+            <h1 className="text-sm font-semibold">{activeFolder.charAt(0).toUpperCase() + activeFolder.slice(1)}</h1>
+            <p className="text-xs text-muted-foreground">{selectedAccountName}</p>
+          </div>
           <button
             onClick={handleSync}
             disabled={syncEmails.isPending}
@@ -109,7 +154,7 @@ export default function Index() {
         <div className="flex-1 overflow-y-auto">
           {emails.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
-              <p className="mb-4">No emails yet</p>
+              <p className="mb-4">No emails in this account</p>
               <button 
                 onClick={handleSync}
                 className="px-4 py-2 bg-foreground text-background rounded-md hover:opacity-90"

@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import { useMarkAsRead, useToggleStar, useArchiveEmail } from "@/hooks/useEmails";
 import { Star, Archive, Trash2 } from "lucide-react";
 import { useEffect } from "react";
+import DOMPurify from 'dompurify';
 
 interface EmailViewProps {
   email: {
@@ -30,12 +31,22 @@ export default function EmailView({ email }: EmailViewProps) {
     }
   }, [email.id, email.is_read, markAsRead]);
 
+  // Sanitize HTML to prevent XSS and remove problematic styles
+  const getSanitizedHTML = (html: string) => {
+    return DOMPurify.sanitize(html, {
+      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'a', 'ul', 'ol', 'li', 'blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'div', 'span', 'img', 'table', 'tr', 'td', 'th', 'thead', 'tbody'],
+      ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class'],
+      FORBID_TAGS: ['style', 'script', 'iframe', 'object', 'embed'],
+      FORBID_ATTR: ['style', 'onclick', 'onload', 'onerror']
+    });
+  };
+
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-background">
       {/* Header */}
-      <div className="border-b border-border p-6">
+      <div className="border-b border-border p-6 bg-background">
         <div className="flex items-start justify-between mb-4">
-          <h1 className="text-2xl font-bold flex-1">
+          <h1 className="text-2xl font-bold flex-1 text-foreground">
             {email.subject || "(No Subject)"}
           </h1>
           
@@ -63,7 +74,7 @@ export default function EmailView({ email }: EmailViewProps) {
           </div>
         </div>
 
-        <div className="space-y-2 text-sm">
+        <div className="space-y-2 text-sm text-foreground">
           <div className="flex items-center gap-2">
             <span className="font-semibold">From:</span>
             <span>{email.from_name || email.from_email}</span>
@@ -80,17 +91,29 @@ export default function EmailView({ email }: EmailViewProps) {
         </div>
       </div>
 
-      {/* Body */}
-      <div className="flex-1 overflow-y-auto p-6">
+      {/* Body - FIXED FORMATTING */}
+      <div className="flex-1 overflow-y-auto p-6 bg-background">
         {email.body_html ? (
           <div 
-            className="prose prose-sm max-w-none dark:prose-invert"
-            dangerouslySetInnerHTML={{ __html: email.body_html }}
+            className="email-content"
+            dangerouslySetInnerHTML={{ __html: getSanitizedHTML(email.body_html) }}
+            style={{
+              fontFamily: 'inherit',
+              fontSize: '14px',
+              lineHeight: '1.6',
+              color: 'inherit'
+            }}
           />
         ) : (
-          <pre className="whitespace-pre-wrap font-sans text-sm">
+          <div 
+            className="whitespace-pre-wrap text-sm leading-relaxed text-foreground"
+            style={{
+              fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+              fontSize: '14px'
+            }}
+          >
             {email.body_text}
-          </pre>
+          </div>
         )}
       </div>
     </div>
