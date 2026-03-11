@@ -7,7 +7,7 @@ import EmailLayout from "@/components/email/EmailLayout";
 import EmailSidebar from "@/components/email/EmailSidebar";
 import EmailListItem from "@/components/email/EmailListItem";
 import EmailView from "@/components/email/EmailView";
-import { Button } from "@/components/ui/button";
+// import { button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 
 export default function Index() {
@@ -53,7 +53,7 @@ export default function Index() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">Failed to load emails</p>
-          <Button onClick={() => window.location.reload()}>Retry</Button>
+          <button onClick={() => window.location.reload()}>Retry</button>
         </div>
       </div>
     );
@@ -67,7 +67,7 @@ export default function Index() {
         {/* Header with sync button */}
         <div className="border-b border-border p-4 flex items-center justify-between">
           <h1 className="text-xl font-bold">Inbox</h1>
-          <Button
+          <button
             onClick={handleSync}
             disabled={syncEmails.isPending}
             variant="outline"
@@ -75,7 +75,7 @@ export default function Index() {
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${syncEmails.isPending ? 'animate-spin' : ''}`} />
             Sync
-          </Button>
+          </button>
         </div>
 
         {/* Email list */}
@@ -84,9 +84,9 @@ export default function Index() {
             {emails.length === 0 ? (
               <div className="p-8 text-center text-muted-foreground">
                 <p className="mb-4">No emails yet</p>
-                <Button onClick={handleSync}>
+                <button onClick={handleSync}>
                   Sync Emails
-                </Button>
+                </button>
               </div>
             ) : (
               emails.map((email) => (

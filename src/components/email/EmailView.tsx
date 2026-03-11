@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { useMarkAsRead, useToggleStar, useArchiveEmail } from "@/hooks/useEmails";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { Star, Archive, Trash2 } from "lucide-react";
 import { useEffect } from "react";
 
@@ -78,7 +78,7 @@ export default function EmailView({ email }: EmailViewProps) {
         </div>
       </div>
 
-      {/* Body */}
+      {/* EMAIL BODY (PRE FORMATTED TEXT WE WONT TOUCH THAT FR) */}
       <div className="flex-1 overflow-y-auto p-6">
         {email.body_html ? (
           <div 

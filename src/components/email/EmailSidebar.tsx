@@ -47,7 +47,7 @@ interface EmailSidebarProps {
   folderCounts: FolderCount;
 }
 
-export function EmailSidebar({ activeFolder, onFolderChange, onCompose, onOpenSettings, folderCounts }: EmailSidebarProps) {
+export default function EmailSidebar({ activeFolder, onFolderChange, onCompose, onOpenSettings, folderCounts }: EmailSidebarProps) {
   const navigate = useNavigate();
 
   return (

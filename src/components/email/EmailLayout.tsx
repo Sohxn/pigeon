@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { EmailSidebar } from "./EmailSidebar";
+import EmailSidebar from "./EmailSidebar";
 import { EmailList } from "./EmailList";
-import { EmailView } from "./EmailView";
+import EmailView from "./EmailView";
 import { ComposeModal } from "./ComposeModal";
 import { SettingsPanel } from "./SettingsPanel";
 import { mockEmails as initialEmails } from "@/data/mockEmails";
@@ -17,7 +17,7 @@ function getSavedWallpaper(): string {
   return "";
 }
 
-export function EmailLayout() {
+export default function EmailLayout() {
   const [activeFolder, setActiveFolder] = useState("inbox");
   const [emails, setEmails] = useState<Email[]>(initialEmails);
   const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);

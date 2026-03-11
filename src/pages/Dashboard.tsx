@@ -4,11 +4,27 @@ import { supabase } from "@/lib/supabase";
 import { initiateGmailAuth } from "@/lib/google_auth";
 import { EmailAccount } from "@/types/email";
 
+//email syncing 
+import { useSyncEmails } from "@/hooks/useEmails";
+import { toast } from "sonner";
+
 export default function Dashboard() {
+
+  const syncEmails = useSyncEmails();
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [accounts, setAccounts] = useState<EmailAccount[]>([]);
   const [loading, setLoading] = useState(true);
+
+
+  //email syncing 
+  const handleSyncAll = () => {
+      toast.promise(syncEmails.mutateAsync(), {
+      loading: 'Syncing all accounts...',
+      success: (data) => `Synced ${data.synced} emails from ${data.accounts_synced} accounts`,
+      error: 'Failed to sync',
+    });
+  }
 
   useEffect(() => {
     loadData();
@@ -174,6 +190,13 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </div>
+
+                  {/* BUTTON TO SYNC EMAILS */}
+                  {accounts.length > 0 && (
+                    <button onClick={handleSyncAll} disabled={syncEmails.isPending}>
+                        {syncEmails.isPending ? 'Syncing' : 'Sync All Accounts'}
+                    </button>
+                  )}
 
                   {/* Actions */}
                   <div className="flex items-center gap-2">
