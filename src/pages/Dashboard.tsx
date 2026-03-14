@@ -16,7 +16,7 @@ import { toast } from "sonner";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { user, signOut, isAuthenticated } = useAuth();
+ const { user, signOut, isAuthenticated, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   
@@ -25,14 +25,17 @@ export default function Dashboard() {
   const setAccounts = useEmailStore(state => state.setAccounts);
   
   // Load accounts on mount
-  useEffect(() => {
+ useEffect(() => {
+    // Wait until Supabase has resolved the session before acting
+    if (authLoading) return;
+ 
     if (!isAuthenticated) {
       navigate("/login");
       return;
     }
-    
+ 
     loadAccounts();
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, authLoading, navigate]);
   
   /**
    * Load user's email accounts from database

@@ -171,8 +171,9 @@ import { RefreshCw } from "lucide-react";
 
 export default function Index() {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  // const { isAuthenticated } = useAuth();
   const { loadData, sync, isLoading, isSyncing } = useEmailData();
+  const { isAuthenticated, loading: authLoading } = useAuth();
 
   // ── Select only raw/primitive state from the store ──────────────────────
   const accounts          = useEmailStore(state => state.accounts);
@@ -236,11 +237,12 @@ export default function Index() {
   }, [allEmails, selectedAccountId]);
 
   // ── Auth guard ───────────────────────────────────────────────────────────
-  useEffect(() => {
+ useEffect(() => {
+    if (authLoading) return; // Wait for Supabase to resolve session
     if (!isAuthenticated) {
       navigate("/login");
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, authLoading, navigate]);
 
   // ── Auto-select first email when list changes ────────────────────────────
   useEffect(() => {
