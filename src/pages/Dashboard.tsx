@@ -1,104 +1,129 @@
+/**
+ * Dashboard Page
+ * Manage email accounts
+ * 
+ * Shows connected accounts, allows adding/removing accounts
+ * Simplified with hooks and store
+ */
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/hooks/useAuth";
+import { useEmailStore } from "@/store/emailStore";
 import { initiateGmailAuth } from "@/lib/google_auth";
-import { EmailAccount } from "@/types/email";
-
-//email syncing 
-import { useSyncEmails } from "@/hooks/useEmails";
+import * as api from "@/services/apiClient";
 import { toast } from "sonner";
 
 export default function Dashboard() {
-
-  const syncEmails = useSyncEmails();
   const navigate = useNavigate();
-  const [user, setUser] = useState<any>(null);
-  const [accounts, setAccounts] = useState<EmailAccount[]>([]);
+  const { user, signOut, isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(true);
-
-
-  //email syncing 
-  const handleSyncAll = () => {
-      toast.promise(syncEmails.mutateAsync(), {
-      loading: 'Syncing all accounts...',
-      success: (data) => `Synced ${data.synced} emails from ${data.accounts_synced} accounts`,
-      error: 'Failed to sync',
-    });
-  }
-
+  const [syncing, setSyncing] = useState(false);
+  
+  // Get accounts from store
+  const accounts = useEmailStore(state => state.accounts);
+  const setAccounts = useEmailStore(state => state.setAccounts);
+  
+  // Load accounts on mount
   useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    // Check auth
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
+    if (!isAuthenticated) {
       navigate("/login");
       return;
     }
-    setUser(session.user);
-
-    // Load connected email accounts
-    const { data: accountsData } = await supabase
-      .from('email_accounts')
-      .select('*')
-      .eq('user_id', session.user.id)
-      .order('is_primary', { ascending: false })
-      .order('created_at', { ascending: true });
-
-    setAccounts(accountsData || []);
-    setLoading(false);
+    
+    loadAccounts();
+  }, [isAuthenticated, navigate]);
+  
+  /**
+   * Load user's email accounts from database
+   */
+  const loadAccounts = async () => {
+    try {
+      setLoading(true);
+      const data = await api.fetchEmailAccounts();
+      setAccounts(data);
+    } catch (error: any) {
+      console.error('Failed to load accounts:', error);
+      toast.error('Failed to load accounts');
+    } finally {
+      setLoading(false);
+    }
   };
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/");
-  };
-
+  
+  /**
+   * Add a new Gmail account via OAuth
+   */
   const handleAddGmail = () => {
-    // Store state to know we're adding an account
+    // Store flag to know we're adding account
     localStorage.setItem('adding_account', 'true');
     initiateGmailAuth();
   };
-
+  
+  /**
+   * Navigate to inbox (main email view)
+   */
   const handleGoToInbox = () => {
     if (accounts.length === 0) {
-      alert('Please add at least one email account first');
+      toast.error('Please add at least one email account first');
       return;
     }
     navigate("/");
   };
-
+  
+  /**
+   * Remove an email account
+   */
   const handleRemoveAccount = async (accountId: string) => {
     if (!confirm('Remove this email account? All synced emails will be deleted.')) {
       return;
     }
-
-    await supabase
-      .from('email_accounts')
-      .delete()
-      .eq('id', accountId);
-
-    loadData();
+    
+    try {
+      await api.removeEmailAccount(accountId);
+      await loadAccounts(); // Reload list
+      toast.success('Account removed');
+    } catch (error: any) {
+      console.error('Failed to remove account:', error);
+      toast.error('Failed to remove account');
+    }
   };
-
+  
+  /**
+   * Set an account as primary
+   */
   const handleSetPrimary = async (accountId: string) => {
-    // Unset all primary flags
-    await supabase
-      .from('email_accounts')
-      .update({ is_primary: false })
-      .eq('user_id', user.id);
-
-    // Set this one as primary
-    await supabase
-      .from('email_accounts')
-      .update({ is_primary: true })
-      .eq('id', accountId);
-
-    loadData();
+    try {
+      await api.setPrimaryAccount(accountId);
+      await loadAccounts(); // Reload list
+      toast.success('Primary account updated');
+    } catch (error: any) {
+      console.error('Failed to set primary:', error);
+      toast.error('Failed to update primary account');
+    }
   };
-
+  
+  /**
+   * Sync all email accounts
+   */
+  const handleSyncAll = async () => {
+    try {
+      setSyncing(true);
+      const result = await api.syncEmails();
+      
+      if (result.synced > 0) {
+        toast.success(`Synced ${result.synced} emails from ${result.accounts_synced} accounts`);
+      } else {
+        toast.info('No new emails');
+      }
+    } catch (error: any) {
+      console.error('Sync failed:', error);
+      toast.error('Failed to sync emails');
+    } finally {
+      setSyncing(false);
+    }
+  };
+  
+  // Loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -106,7 +131,7 @@ export default function Dashboard() {
       </div>
     );
   }
-
+  
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -116,7 +141,7 @@ export default function Dashboard() {
           <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground">{user?.email}</span>
             <button
-              onClick={handleLogout}
+              onClick={signOut}
               className="text-sm text-muted-foreground hover:text-foreground"
             >
               Log out
@@ -124,19 +149,20 @@ export default function Dashboard() {
           </div>
         </div>
       </header>
-
+      
       {/* Main Content */}
       <main className="max-w-5xl mx-auto px-6 py-12">
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-2">Email Accounts</h2>
           <p className="text-muted-foreground">
-            Manage your connected email accounts. All emails will appear in a unified inbox.
+            Manage your connected email accounts. All emails appear in a unified inbox.
           </p>
         </div>
-
+        
         {/* Connected Accounts */}
         <div className="space-y-4 mb-8">
           {accounts.length === 0 ? (
+            // Empty state
             <div className="border border-dashed border-border rounded-lg p-12 text-center">
               <div className="w-16 h-16 bg-foreground/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -155,6 +181,7 @@ export default function Dashboard() {
               </button>
             </div>
           ) : (
+            // Account list
             <>
               {accounts.map((account) => (
                 <div
@@ -169,9 +196,8 @@ export default function Dashboard() {
                           <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/>
                         </svg>
                       )}
-                      {/* Add more provider icons */}
                     </div>
-
+                    
                     {/* Account Info */}
                     <div>
                       <div className="flex items-center gap-2">
@@ -190,34 +216,27 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </div>
-
-                  {/* BUTTON TO SYNC EMAILS */}
-                  {accounts.length > 0 && (
-                    <button onClick={handleSyncAll} disabled={syncEmails.isPending}>
-                        {syncEmails.isPending ? 'Syncing' : 'Sync All Accounts'}
-                    </button>
-                  )}
-
+                  
                   {/* Actions */}
                   <div className="flex items-center gap-2">
                     {!account.is_primary && (
                       <button
                         onClick={() => handleSetPrimary(account.id)}
-                        className="text-sm text-muted-foreground hover:text-foreground"
+                        className="text-sm text-muted-foreground hover:text-foreground px-3 py-1 rounded-md hover:bg-secondary"
                       >
                         Set as primary
                       </button>
                     )}
                     <button
                       onClick={() => handleRemoveAccount(account.id)}
-                      className="text-sm text-red-600 hover:text-red-700"
+                      className="text-sm text-red-600 hover:text-red-700 px-3 py-1"
                     >
                       Remove
                     </button>
                   </div>
                 </div>
               ))}
-
+              
               {/* Add Another Account */}
               <button
                 onClick={handleAddGmail}
@@ -228,7 +247,7 @@ export default function Dashboard() {
             </>
           )}
         </div>
-
+        
         {/* Action Buttons */}
         {accounts.length > 0 && (
           <div className="flex gap-3">
@@ -239,10 +258,11 @@ export default function Dashboard() {
               Go to Inbox →
             </button>
             <button
-              onClick={() => {/* Implement sync all */}}
-              className="px-6 py-3 border border-border rounded-md hover:bg-secondary"
+              onClick={handleSyncAll}
+              disabled={syncing}
+              className="px-6 py-3 border border-border rounded-md hover:bg-secondary disabled:opacity-50"
             >
-              Sync All Accounts
+              {syncing ? 'Syncing...' : 'Sync All Accounts'}
             </button>
           </div>
         )}

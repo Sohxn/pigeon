@@ -1,8 +1,10 @@
 import { format } from "date-fns";
-import { useMarkAsRead, useToggleStar, useArchiveEmail } from "@/hooks/useEmails";
+import { useEmailStore } from "@/store/emailStore";
+import * as api from "@/services/apiClient";
 import { Star, Archive, Trash2 } from "lucide-react";
 import { useEffect } from "react";
 import DOMPurify from 'dompurify';
+import { toast } from 'sonner';
 
 interface EmailViewProps {
   email: {
@@ -20,18 +22,48 @@ interface EmailViewProps {
 }
 
 export default function EmailView({ email }: EmailViewProps) {
-  const markAsRead = useMarkAsRead();
-  const toggleStar = useToggleStar();
-  const archiveEmail = useArchiveEmail();
-
-  // Mark as read when opened
+  // Get actions from store
+  const markAsRead = useEmailStore(state => state.markEmailAsRead);
+  const toggleStar = useEmailStore(state => state.toggleEmailStar);
+  const archiveEmail = useEmailStore(state => state.archiveEmail);
+  
+  // Mark as read when email is viewed
   useEffect(() => {
     if (!email.is_read) {
-      markAsRead.mutate(email.id);
+      markAsRead(email.id);
+      // Also update in database
+      api.markEmailAsRead(email.id).catch(err => 
+        console.error('Failed to mark as read:', err)
+      );
     }
   }, [email.id, email.is_read, markAsRead]);
-
-  // Sanitize HTML to prevent XSS and remove problematic styles
+  
+  // Handle star toggle
+  const handleToggleStar = async () => {
+    try {
+      toggleStar(email.id);
+      await api.toggleEmailStar(email.id, email.is_starred);
+    } catch (error) {
+      console.error('Failed to toggle star:', error);
+      toast.error('Failed to update email');
+      // Revert on error
+      toggleStar(email.id);
+    }
+  };
+  
+  // Handle archive
+  const handleArchive = async () => {
+    try {
+      archiveEmail(email.id);
+      await api.archiveEmail(email.id);
+      toast.success('Email archived');
+    } catch (error) {
+      console.error('Failed to archive:', error);
+      toast.error('Failed to archive email');
+    }
+  };
+  
+  // Sanitize HTML
   const getSanitizedHTML = (html: string) => {
     return DOMPurify.sanitize(html, {
       ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'a', 'ul', 'ol', 'li', 'blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'div', 'span', 'img', 'table', 'tr', 'td', 'th', 'thead', 'tbody'],
@@ -40,7 +72,7 @@ export default function EmailView({ email }: EmailViewProps) {
       FORBID_ATTR: ['style', 'onclick', 'onload', 'onerror']
     });
   };
-
+  
   return (
     <div className="h-full flex flex-col bg-background">
       {/* Header */}
@@ -52,14 +84,14 @@ export default function EmailView({ email }: EmailViewProps) {
           
           <div className="flex gap-2">
             <button
-              onClick={() => toggleStar.mutate({ emailId: email.id, isStarred: email.is_starred })}
+              onClick={handleToggleStar}
               className="p-2 hover:bg-secondary rounded-md transition-colors"
               title={email.is_starred ? "Unstar" : "Star"}
             >
               <Star className={`w-4 h-4 ${email.is_starred ? 'fill-yellow-500 text-yellow-500' : ''}`} />
             </button>
             <button
-              onClick={() => archiveEmail.mutate(email.id)}
+              onClick={handleArchive}
               className="p-2 hover:bg-secondary rounded-md transition-colors"
               title="Archive"
             >
@@ -73,7 +105,7 @@ export default function EmailView({ email }: EmailViewProps) {
             </button>
           </div>
         </div>
-
+        
         <div className="space-y-2 text-sm text-foreground">
           <div className="flex items-center gap-2">
             <span className="font-semibold">From:</span>
@@ -90,8 +122,8 @@ export default function EmailView({ email }: EmailViewProps) {
           </div>
         </div>
       </div>
-
-      {/* Body - FIXED FORMATTING */}
+      
+      {/* Body */}
       <div className="flex-1 overflow-y-auto p-6 bg-background">
         {email.body_html ? (
           <div 

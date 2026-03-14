@@ -1,82 +1,58 @@
-import { useState, useEffect } from "react";
+/**
+ * Inbox Page
+ * Main email interface
+ * 
+ * Now uses Zustand store instead of local state
+ * Much simpler and easier to understand!
+ */
+
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
-import { useEmails, useSyncEmails } from "@/hooks/useEmails";
+import { useAuth } from "@/hooks/useAuth";
+import { useEmailData } from "@/hooks/useEmailData";
+import { useEmailStore } from "@/store/emailStore";
 import { toast } from "sonner";
 import EmailSidebar from "@/components/email/EmailSidebar";
 import EmailListItem from "@/components/email/EmailListItem";
 import EmailView from "@/components/email/EmailView";
-import { RefreshCw } from "lucide-react";
-
-interface EmailAccount {
-  id: string;
-  email_address: string;
-  provider: string;
-  is_primary: boolean;
-}
+import { RefreshCw, Wifi, WifiOff } from "lucide-react";
 
 export default function Index() {
   const navigate = useNavigate();
-  const [selectedEmailId, setSelectedEmailId] = useState<string | null>(null);
-  const [activeFolder, setActiveFolder] = useState("inbox");
-  const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null); // null = All Accounts
-  const [accounts, setAccounts] = useState<EmailAccount[]>([]);
+  const { isAuthenticated } = useAuth();
+  const { loadData, sync, isLoading, isSyncing } = useEmailData();
   
-  const { data: allEmails = [], isLoading, error } = useEmails();
-  const syncEmails = useSyncEmails();
-
-  // Load user's email accounts
+  // Get state from store
+  const accounts = useEmailStore(state => state.accounts);
+  const selectedEmailId = useEmailStore(state => state.selectedEmailId);
+  const selectedAccountId = useEmailStore(state => state.selectedAccountId);
+  const activeFolder = useEmailStore(state => state.activeFolder);
+  
+  // Get actions from store
+  const setSelectedEmailId = useEmailStore(state => state.setSelectedEmailId);
+  const setSelectedAccountId = useEmailStore(state => state.setSelectedAccountId);
+  const setActiveFolder = useEmailStore(state => state.setActiveFolder);
+  
+  // Get computed/filtered data
+  const emails = useEmailStore(state => state.getFilteredEmails());
+  const selectedEmail = useEmailStore(state => state.getSelectedEmail());
+  const folderCounts = useEmailStore(state => state.getFolderCounts());
+  
+  // Check auth on mount
   useEffect(() => {
-    loadAccounts();
-  }, []);
-
-  const loadAccounts = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { data } = await supabase
-      .from('email_accounts')
-      .select('id, email_address, provider, is_primary')
-      .eq('user_id', user.id)
-      .order('is_primary', { ascending: false });
-
-    if (data) {
-      setAccounts(data);
+    if (!isAuthenticated) {
+      navigate("/login");
     }
-  };
-
-  // Check auth
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        navigate("/login");
-      }
-    });
-  }, [navigate]);
-
-  // Filter emails by selected account
-  const emails = selectedAccountId 
-    ? allEmails.filter(e => e.account_id === selectedAccountId)
-    : allEmails;
-
-  // Handle sync
-  const handleSync = () => {
-    toast.promise(syncEmails.mutateAsync(), {
-      loading: 'Syncing emails...',
-      success: (data) => `Synced ${data.synced} emails`,
-      error: 'Failed to sync emails',
-    });
-  };
-
-  const selectedEmail = emails.find(e => e.id === selectedEmailId);
-
-  // Auto-select first email when emails change
+  }, [isAuthenticated, navigate]);
+  
+  // Auto-select first email when filtered emails change
   useEffect(() => {
     if (emails.length > 0 && !selectedEmailId) {
       setSelectedEmailId(emails[0].id);
     }
-  }, [emails, selectedEmailId]);
-
+  }, [emails, selectedEmailId, setSelectedEmailId]);
+  
+  // Loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -87,76 +63,55 @@ export default function Index() {
       </div>
     );
   }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">Failed to load emails</p>
-          <button 
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-foreground text-background rounded-md"
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const folderCounts = {
-    inbox: emails.filter(e => !e.is_archived && !e.is_trashed && !e.is_read).length,
-    starred: emails.filter(e => e.is_starred && !e.is_trashed).length,
-    sent: 0,
-    drafts: 0,
-    archive: emails.filter(e => e.is_archived && !e.is_trashed).length,
-    trash: emails.filter(e => e.is_trashed).length,
-  };
-
-  // Get selected account name
+  
+  // Get selected account name for display
   const selectedAccountName = selectedAccountId
-    ? accounts.find(a => a.id === selectedAccountId)?.email_address
+    ? accounts.find(a => a.id === selectedAccountId)?.email_address || "Unknown"
     : "All Accounts";
-
+  
   return (
     <div className="h-screen flex bg-background">
-      {/* Sidebar */}
+      {/* Sidebar with folders and account switcher */}
       <EmailSidebar
         activeFolder={activeFolder}
         onFolderChange={setActiveFolder}
-        onCompose={() => toast.info("Compose not yet implemented")}
-        onOpenSettings={() => toast.info("Settings not yet implemented")}
+        onCompose={() => toast.info("Compose coming soon")}
+        onOpenSettings={() => toast.info("Settings coming soon")}
         folderCounts={folderCounts}
         accounts={accounts}
         selectedAccountId={selectedAccountId}
         onAccountChange={setSelectedAccountId}
       />
-
+      
       {/* Email List */}
       <div className="w-96 border-r border-border flex flex-col">
-        {/* Header with account name and sync button */}
+        {/* Header */}
         <div className="h-14 border-b border-border px-4 flex items-center justify-between">
           <div>
-            <h1 className="text-sm font-semibold">{activeFolder.charAt(0).toUpperCase() + activeFolder.slice(1)}</h1>
+            <h1 className="text-sm font-semibold">
+              {activeFolder.charAt(0).toUpperCase() + activeFolder.slice(1)}
+            </h1>
             <p className="text-xs text-muted-foreground">{selectedAccountName}</p>
           </div>
+          
+          {/* Sync button */}
           <button
-            onClick={handleSync}
-            disabled={syncEmails.isPending}
+            onClick={sync}
+            disabled={isSyncing}
             className="p-2 hover:bg-secondary rounded-md transition-colors disabled:opacity-50"
             title="Sync emails"
           >
-            <RefreshCw className={`w-4 h-4 ${syncEmails.isPending ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
           </button>
         </div>
-
-        {/* Email List */}
+        
+        {/* Email items */}
         <div className="flex-1 overflow-y-auto">
           {emails.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
-              <p className="mb-4">No emails in this account</p>
+              <p className="mb-4">No emails</p>
               <button 
-                onClick={handleSync}
+                onClick={sync}
                 className="px-4 py-2 bg-foreground text-background rounded-md hover:opacity-90"
               >
                 Sync Emails
@@ -174,8 +129,8 @@ export default function Index() {
           )}
         </div>
       </div>
-
-      {/* Email View */}
+      
+      {/* Email viewer */}
       <div className="flex-1 overflow-y-auto">
         {selectedEmail ? (
           <EmailView email={selectedEmail} />
