@@ -12,11 +12,6 @@ import { toast } from 'sonner';
 export function useEmailData() {
   const store = useEmailStore();
   
-  // Load initial data when component mounts
-  useEffect(() => {
-    loadData();
-  }, []);
-  
   /**
    * Load accounts and emails from database
    * Called on initial page load
@@ -25,6 +20,14 @@ export function useEmailData() {
     try {
       store.setLoading(true);
       store.setError(null);
+      
+      // Check if user is authenticated first
+      const user = await api.getCurrentUser();
+      if (!user) {
+        console.log('No user - skipping data load');
+        store.setLoading(false);
+        return;
+      }
       
       // Load in parallel for speed
       const [accounts, emails] = await Promise.all([
@@ -42,8 +45,12 @@ export function useEmailData() {
       
     } catch (error: any) {
       console.error('Failed to load data:', error);
-      store.setError(error.message);
-      toast.error('Failed to load emails');
+      
+      // Don't show error if it's just "not authenticated"
+      if (error.message !== 'Not authenticated') {
+        store.setError(error.message);
+        toast.error('Failed to load emails');
+      }
     } finally {
       store.setLoading(false);
     }

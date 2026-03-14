@@ -13,7 +13,12 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <Toaster position="bottom-right" />
-    <BrowserRouter>
+    <BrowserRouter
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
       <Routes>
         {/* Public routes */}
         <Route path="/landing" element={<Landing />} />
@@ -25,7 +30,7 @@ const App = () => (
         
         {/* Protected routes */}
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/" element={<Index />} />  {/* Main inbox */}
+        <Route path="/" element={<Index />} />
       </Routes>
     </BrowserRouter>
   </QueryClientProvider>

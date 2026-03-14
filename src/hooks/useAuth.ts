@@ -10,19 +10,20 @@ import * as api from '@/services/apiClient';
 
 export function useAuth() {
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Add loading state
   const navigate = useNavigate();
   
   // Check if user is logged in on mount
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user || null);
-      setLoading(false);
+      setLoading(false); // Auth check complete
     });
     
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null);
+      setLoading(false);
     });
     
     return () => subscription.unsubscribe();
@@ -46,7 +47,7 @@ export function useAuth() {
   
   return {
     user,
-    loading,
+    loading, // Expose loading state
     signUp,
     signIn,
     signOut,

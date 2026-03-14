@@ -47,8 +47,24 @@ async function apiRequest<T>(
 /**
  * Get current authenticated user
  */
+// export async function getCurrentUser() {
+//   const { data: { user }, error } = await supabase.auth.getUser();
+//   if (error) throw error;
+//   return user;
+// }
+
+/**
+ * Get current authenticated user
+ * Returns null if not authenticated (doesn't throw)
+ */
 export async function getCurrentUser() {
   const { data: { user }, error } = await supabase.auth.getUser();
+  
+  // Don't throw on "no session" error - just return null
+  if (error && error.message === 'Auth session missing!') {
+    return null;
+  }
+  
   if (error) throw error;
   return user;
 }
