@@ -15,14 +15,14 @@ class GmailService:
         self.client_id = client_id
         self.client_secret = client_secret
         self.redirect_uri = redirect_uri
-    
+
+    # ── AUTH ──────────────────────────────────────────────────────────────
+
     def exchange_code_for_tokens(self, auth_code):
         """Exchange authorization code for access + refresh tokens"""
-
         print(f"~Backend redirect_uri: {self.redirect_uri}")
         print(f"~Backend client_id: {self.client_id}")
         print(f"~Auth code received: {auth_code[:20]}...")
-
 
         flow = Flow.from_client_config(
             {
@@ -34,10 +34,6 @@ class GmailService:
                     "token_uri": "https://oauth2.googleapis.com/token",
                 }
             },
-
-
-            #updated scopes
-            #added openid
             scopes=[
                 'openid',
                 'https://www.googleapis.com/auth/gmail.readonly',
@@ -48,34 +44,28 @@ class GmailService:
                 'https://www.googleapis.com/auth/userinfo.email',
             ]
         )
-        
-
         flow.redirect_uri = self.redirect_uri
-
         print(f"~Flow redirect_uri: {flow.redirect_uri}")
-        
+
         try:
             flow.fetch_token(code=auth_code)
             credentials = flow.credentials
-            
-            # Get user's email
             service = build('gmail', 'v1', credentials=credentials)
             profile = service.users().getProfile(userId='me').execute()
-            
+
             return {
                 'access_token': credentials.token,
                 'refresh_token': credentials.refresh_token,
                 'token_expiry': credentials.expiry.isoformat() if credentials.expiry else None,
-                'gmail_email': profile['emailAddress']
+                'gmail_email': profile['emailAddress'],
+                'history_id': profile.get('historyId'),   # <-- capture on first connect
             }
         except Exception as e:
             print(f"!!! Token exchange error: {e}")
             raise
 
-
-    
     def get_gmail_service(self, access_token, refresh_token):
-        """Create Gmail API service"""
+        """Build an authenticated Gmail API client"""
         credentials = Credentials(
             token=access_token,
             refresh_token=refresh_token,
@@ -84,56 +74,120 @@ class GmailService:
             client_secret=self.client_secret
         )
         return build('gmail', 'v1', credentials=credentials)
-    
-    def fetch_emails(self, access_token, refresh_token, max_results=50, page_token=None, query='in:inbox'):
-        """Fetch emails from Gmail"""
+
+    # ── SYNC ──────────────────────────────────────────────────────────────
+
+    def fetch_emails_full(self, access_token, refresh_token, max_results=50):
+        """
+        Full sync: fetch the most recent N emails.
+        Used on the very first sync (no history_id yet).
+        Returns { emails, history_id }
+        """
         try:
             service = self.get_gmail_service(access_token, refresh_token)
-            
+
             results = service.users().messages().list(
                 userId='me',
                 maxResults=max_results,
-                pageToken=page_token,
-                q=query
+                q='in:inbox'
             ).execute()
-            
+
             messages = results.get('messages', [])
-            next_page_token = results.get('nextPageToken')
-            
+
             emails = []
             for msg in messages:
                 email_data = self._get_email_details(service, msg['id'])
                 if email_data:
                     emails.append(email_data)
-            
-            return {
-                'emails': emails,
-                'next_page_token': next_page_token
-            }
-            
+
+            # Grab current historyId so next sync can be incremental
+            profile = service.users().getProfile(userId='me').execute()
+            history_id = profile.get('historyId')
+
+            print(f"Full sync: fetched {len(emails)} emails, historyId={history_id}")
+            return {'emails': emails, 'history_id': history_id, 'is_full_sync': True}
+
         except HttpError as error:
-            print(f'Gmail API error: {error}')
-            return {'emails': [], 'next_page_token': None}
-    
+            print(f'Gmail API error during full sync: {error}')
+            return {'emails': [], 'history_id': None, 'is_full_sync': True}
+
+    def fetch_emails_incremental(self, access_token, refresh_token, start_history_id):
+        """
+        Incremental sync: only fetch messages added since start_history_id.
+        This is very fast — only new emails are returned.
+        Returns { emails, history_id } or None if history expired (caller should fall back to full sync).
+        """
+        try:
+            service = self.get_gmail_service(access_token, refresh_token)
+
+            # Walk through all history pages
+            new_message_ids = set()
+            page_token = None
+
+            while True:
+                kwargs = {
+                    'userId': 'me',
+                    'startHistoryId': start_history_id,
+                    'historyTypes': ['messageAdded'],
+                }
+                if page_token:
+                    kwargs['pageToken'] = page_token
+
+                history_response = service.users().history().list(**kwargs).execute()
+
+                for record in history_response.get('history', []):
+                    for added in record.get('messagesAdded', []):
+                        msg = added.get('message', {})
+                        # Only inbox messages (skip sent, spam, etc.)
+                        labels = msg.get('labelIds', [])
+                        if 'INBOX' in labels:
+                            new_message_ids.add(msg['id'])
+
+                page_token = history_response.get('nextPageToken')
+                if not page_token:
+                    break
+
+            new_history_id = history_response.get('historyId', start_history_id)
+
+            # Fetch full details for each new message
+            emails = []
+            for msg_id in new_message_ids:
+                email_data = self._get_email_details(service, msg_id)
+                if email_data:
+                    emails.append(email_data)
+
+            print(f"Incremental sync: {len(emails)} new emails since historyId={start_history_id}, new historyId={new_history_id}")
+            return {'emails': emails, 'history_id': new_history_id, 'is_full_sync': False}
+
+        except HttpError as error:
+            # 404 means the historyId is too old — Gmail only keeps ~30 days of history
+            if error.resp.status == 404:
+                print(f"History ID expired (404), falling back to full sync")
+                return None  # Signal to caller to do a full sync
+            print(f'Gmail API error during incremental sync: {error}')
+            return {'emails': [], 'history_id': start_history_id, 'is_full_sync': False}
+
+    # ── EMAIL PARSING ─────────────────────────────────────────────────────
+
     def _get_email_details(self, service, msg_id):
-        """Get full email details"""
+        """Fetch and parse a single email"""
         try:
             message = service.users().messages().get(
                 userId='me',
                 id=msg_id,
                 format='full'
             ).execute()
-            
+
             headers = message['payload']['headers']
-            
+
             def get_header(name):
                 for h in headers:
                     if h['name'].lower() == name.lower():
                         return h['value']
                 return None
-            
+
             body = self._get_email_body(message['payload'])
-            
+
             return {
                 'gmail_id': message['id'],
                 'thread_id': message['threadId'],
@@ -153,73 +207,73 @@ class GmailService:
         except Exception as e:
             print(f'Error fetching email {msg_id}: {e}')
             return None
-    
+
     def _get_email_body(self, payload):
-        """Extract text and HTML body"""
+        """Recursively extract text and HTML body from MIME parts"""
         body = {'text': '', 'html': ''}
-        
+
         if 'parts' in payload:
             for part in payload['parts']:
                 if part['mimeType'] == 'text/plain' and 'data' in part['body']:
-                    body['text'] = base64.urlsafe_b64decode(part['body']['data']).decode('utf-8', errors='ignore')
+                    body['text'] = base64.urlsafe_b64decode(
+                        part['body']['data']
+                    ).decode('utf-8', errors='ignore')
                 elif part['mimeType'] == 'text/html' and 'data' in part['body']:
-                    body['html'] = base64.urlsafe_b64decode(part['body']['data']).decode('utf-8', errors='ignore')
+                    body['html'] = base64.urlsafe_b64decode(
+                        part['body']['data']
+                    ).decode('utf-8', errors='ignore')
                 elif 'parts' in part:
                     nested = self._get_email_body(part)
                     body['text'] = body['text'] or nested['text']
                     body['html'] = body['html'] or nested['html']
         elif 'body' in payload and 'data' in payload['body']:
-            decoded = base64.urlsafe_b64decode(payload['body']['data']).decode('utf-8', errors='ignore')
+            decoded = base64.urlsafe_b64decode(
+                payload['body']['data']
+            ).decode('utf-8', errors='ignore')
             if payload['mimeType'] == 'text/plain':
                 body['text'] = decoded
             elif payload['mimeType'] == 'text/html':
                 body['html'] = decoded
-        
-        # Fallback: convert HTML to text
+
+        # Fallback: convert HTML → plain text
         if not body['text'] and body['html']:
             body['text'] = html2text(body['html'])
-        
+
         return body
-    
+
+    # ── HELPERS ───────────────────────────────────────────────────────────
+
     def _extract_email(self, from_header):
-        """Extract email from 'Name <email@example.com>'"""
         if not from_header:
             return ''
         match = re.search(r'<(.+?)>', from_header)
         return match.group(1) if match else from_header.strip()
-    
+
     def _extract_name(self, from_header):
-        """Extract name from 'Name <email@example.com>'"""
         if not from_header:
             return ''
         match = re.match(r'^(.+?)\s*<.+?>$', from_header)
         return match.group(1).strip('"') if match else self._extract_email(from_header)
-    
+
     def _parse_email_list(self, email_str):
-        """Parse comma-separated email list"""
         if not email_str:
             return []
-        emails = re.findall(r'[\w\.-]+@[\w\.-]+', email_str)
-        return emails
-    
+        return re.findall(r'[\w\.-]+@[\w\.-]+', email_str)
+
     def _parse_date(self, date_str):
-        """Parse email date to ISO format"""
         try:
-            dt = parsedate_to_datetime(date_str)
-            return dt.isoformat()
-        except:
+            return parsedate_to_datetime(date_str).isoformat()
+        except Exception:
             return None
-    
+
+    # ── SEND ──────────────────────────────────────────────────────────────
+
     def send_email(self, access_token, refresh_token, to, subject, body):
-        """Send an email"""
         service = self.get_gmail_service(access_token, refresh_token)
-        
         message = MIMEText(body)
         message['to'] = to
         message['subject'] = subject
-        
         raw_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
-        
         try:
             sent = service.users().messages().send(
                 userId='me',

@@ -1,37 +1,45 @@
+import time
+from datetime import datetime, timezone
 from supabase import create_client, Client
 
-class SupabaseService:
-    # CONSTRUCTOR TO INITIALISE SUPA CLIENT 
-    def __init__(self, url, key):
-        self.client: Client = create_client(url, key)
-    
 
-    # EMAIL ACCOUNTS (New multi-account structure)
+class SupabaseService:
+    def __init__(self, url, key):
+        self.url = url
+        self.key = key
+        self.client: Client = create_client(url, key)
+
+    def _refresh_client(self):
+        """Recreate the Supabase client to recover from a dropped HTTP/2 connection."""
+        self.client = create_client(self.url, self.key)
+
+    def _now_iso(self) -> str:
+        """Return current UTC time as ISO-8601 string for use in Supabase REST calls."""
+        return datetime.now(timezone.utc).isoformat()
+
+    # ── EMAIL ACCOUNTS ────────────────────────────────────────────────────
+
     def save_email_account(self, account_data):
-        """Save email account"""
         result = self.client.table('email_accounts').upsert(account_data).execute()
         return result.data
-    
+
     def get_user_email_accounts(self, user_id):
-        """Get all email accounts for a user"""
         result = self.client.table('email_accounts')\
             .select('*')\
             .eq('user_id', user_id)\
             .eq('is_connected', True)\
             .execute()
         return result.data
-    
+
     def get_email_account(self, account_id):
-        """Get specific email account"""
         result = self.client.table('email_accounts')\
             .select('*')\
             .eq('id', account_id)\
             .single()\
             .execute()
         return result.data
-    
+
     def get_primary_account(self, user_id):
-        """Get user's primary email account"""
         result = self.client.table('email_accounts')\
             .select('*')\
             .eq('user_id', user_id)\
@@ -39,18 +47,67 @@ class SupabaseService:
             .single()\
             .execute()
         return result.data if result.data else None
-    
 
-    # EMAILS
-    def save_email(self, email_data):
-        """Save email to database"""
-        result = self.client.table('emails').upsert(email_data).execute()
-        return result.data
-    
+    def update_account_history_id(self, account_id: str, history_id: str, email_address: str = ''):
+        """
+        Persist the Gmail historyId after each sync so the next sync is incremental.
 
-    # FETCHING EMAILS FROM DATABASE
-    def get_emails(self, user_id, limit=50):
-        """Get user's emails from all accounts"""
+        Proactively refreshes the HTTP client first because the preceding batch
+        upsert tends to exhaust HTTP/2 stream slots on the existing connection.
+        Uses a real ISO-8601 datetime for last_sync — 'NOW()' is a SQL function
+        and does NOT get evaluated by the Supabase REST API.
+        Retries up to 3 times with exponential back-off (0.5s, 1s, 2s).
+        """
+        self._refresh_client()  # always start with a fresh connection here
+
+        payload = {
+            'last_history_id': str(history_id),
+            'last_sync': self._now_iso(),
+        }
+
+        for attempt in range(3):
+            try:
+                self.client.table('email_accounts')\
+                    .update(payload)\
+                    .eq('id', account_id)\
+                    .execute()
+                print(f"history_id saved for {email_address or account_id}: {history_id}")
+                return
+            except Exception as e:
+                wait = 0.5 * (2 ** attempt)  # 0.5s, 1s, 2s
+                print(f"update_account_history_id attempt {attempt + 1} failed: {e} — retrying in {wait}s")
+                time.sleep(wait)
+                self._refresh_client()
+
+        print(f"ERROR: could not save history_id for {email_address or account_id} after 3 attempts")
+
+    # ── EMAILS ────────────────────────────────────────────────────────────
+
+    def save_emails_batch(self, emails: list):
+        """
+        Upsert all emails in a single HTTP request.
+        on_conflict='gmail_id' means duplicates are silently updated, never rejected.
+        Retries with a fresh connection and back-off on failure.
+        """
+        if not emails:
+            return []
+
+        for attempt in range(3):
+            try:
+                result = self.client.table('emails')\
+                    .upsert(emails, on_conflict='gmail_id')\
+                    .execute()
+                return result.data
+            except Exception as e:
+                wait = 0.5 * (2 ** attempt)
+                print(f"save_emails_batch attempt {attempt + 1} failed: {e} — retrying in {wait}s")
+                time.sleep(wait)
+                self._refresh_client()
+
+        print('ERROR: save_emails_batch failed after 3 attempts')
+        return []
+
+    def get_emails(self, user_id, limit=100):
         result = self.client.table('emails')\
             .select('*, email_accounts(email_address, provider)')\
             .eq('user_id', user_id)\
@@ -58,9 +115,8 @@ class SupabaseService:
             .limit(limit)\
             .execute()
         return result.data
-    
-    def get_emails_by_account(self, account_id, limit=50):
-        """Get emails from specific account"""
+
+    def get_emails_by_account(self, account_id, limit=100):
         result = self.client.table('emails')\
             .select('*')\
             .eq('account_id', account_id)\
@@ -68,29 +124,23 @@ class SupabaseService:
             .limit(limit)\
             .execute()
         return result.data
-    
-    
+
     def update_email_status(self, email_id, updates):
-        """Update email status"""
         result = self.client.table('emails')\
             .update(updates)\
             .eq('id', email_id)\
             .execute()
         return result.data
 
+    # ── LEGACY ────────────────────────────────────────────────────────────
 
-    # LEGACY SUPPORT (for send_email route that still uses get_gmail_tokens)
     def get_gmail_tokens(self, user_id):
-        """Get user's primary Gmail account tokens (for sending)"""
         account = self.get_primary_account(user_id)
         if not account:
-            # If no primary, get first account
             accounts = self.get_user_email_accounts(user_id)
             account = accounts[0] if accounts else None
-        
         if not account:
             raise Exception("No email account connected")
-        
         return {
             'access_token': account['access_token'],
             'refresh_token': account['refresh_token'],
