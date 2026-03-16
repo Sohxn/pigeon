@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { ExternalLink } from "lucide-react";
 
 export default function Login() {
   const { signIn } = useAuth();
@@ -25,6 +26,43 @@ export default function Login() {
   
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-6">
+
+    {/* adding a navbar for verification */}
+     {/* Top Navigation Bar */}
+      <header className="w-full border-b border-border">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <Link to="/landing" className="text-xl font-bold">
+            Pigeon Mail
+          </Link>
+          
+          {/* Top Right Buttons */}
+          <div className="flex items-center gap-3">
+            <Link
+              to="/privacy"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Privacy
+            </Link>
+            <Link
+              to="/terms"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Terms
+            </Link>
+            <a
+              href="https://github.com/sohxn"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              GitHub
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          </div>
+        </div>
+      </header>
+
+
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold mb-2">Welcome back</h1>

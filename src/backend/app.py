@@ -4,8 +4,13 @@ from config import Config
 from services.gmail_service import GmailService
 from services.supa_auth import SupabaseService
 
+#development
 app = Flask(__name__)
 CORS(app)
+
+
+#production
+
 
 gmail_service = GmailService(
     Config.google_client_id,
