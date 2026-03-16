@@ -31,8 +31,7 @@ export default function ComingSoon() {
             <h1 className="text-4xl font-bold mb-3">Coming Soon</h1>
             
             <p className="text-lg text-muted-foreground leading-relaxed">
-              This feature is currently under development. 
-              We're working hard to bring it to you soon!
+              in short, a better inbox
             </p>
           </div>
           
