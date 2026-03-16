@@ -1,15 +1,7 @@
-/**
- * Signup Page
- * User registration
- * 
- * Uses useAuth hook for clean separation of logic
- */
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { ExternalLink } from "lucide-react";
-
 
 export default function Signup() {
   const { signUp } = useAuth();
@@ -34,9 +26,8 @@ export default function Signup() {
   };
   
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6">
-      
-      {/* Top navigation bar */}
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Top Navigation Bar */}
       <header className="w-full border-b border-border">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/landing" className="text-xl font-bold">
@@ -69,69 +60,71 @@ export default function Signup() {
           </div>
         </div>
       </header>
-    
-      
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold mb-2">Create your account</h1>
-          <p className="text-muted-foreground">Get started with Pigeon Mail</p>
-        </div>
-        
-        <div className="bg-card border border-border rounded-lg p-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded text-sm">
-                {error}
-              </div>
-            )}
-            
-            <div>
-              <label className="block text-sm font-medium mb-2">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-foreground bg-background"
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-foreground bg-background"
-                minLength={6}
-                required
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                Must be at least 6 characters
-              </p>
-            </div>
-            
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2 bg-foreground text-background rounded-md hover:opacity-90 disabled:opacity-50"
-            >
-              {loading ? "Creating account..." : "Sign up"}
-            </button>
-          </form>
+
+      {/* Signup Form - Centered */}
+      <div className="flex-1 flex items-center justify-center p-6">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold mb-2">Create your account</h1>
+            <p className="text-muted-foreground">Get started with Pigeon Mail</p>
+          </div>
           
-          <div className="mt-4 text-center text-sm">
-            <span className="text-muted-foreground">Already have an account? </span>
-            <Link to="/login" className="text-foreground hover:underline font-medium">
-              Log in
+          <div className="bg-card border border-border rounded-lg p-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded text-sm">
+                  {error}
+                </div>
+              )}
+              
+              <div>
+                <label className="block text-sm font-medium mb-2">Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-foreground bg-background"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-2">Password</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-foreground bg-background"
+                  minLength={6}
+                  required
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Must be at least 6 characters
+                </p>
+              </div>
+              
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-2 bg-foreground text-background rounded-md hover:opacity-90 disabled:opacity-50"
+              >
+                {loading ? "Creating account..." : "Sign up"}
+              </button>
+            </form>
+            
+            <div className="mt-4 text-center text-sm">
+              <span className="text-muted-foreground">Already have an account? </span>
+              <Link to="/login" className="text-foreground hover:underline font-medium">
+                Log in
+              </Link>
+            </div>
+          </div>
+          
+          <div className="text-center mt-6">
+            <Link to="/landing" className="text-sm text-muted-foreground hover:text-foreground">
+              ← Back to home
             </Link>
           </div>
-        </div>
-        
-        <div className="text-center mt-6">
-          <Link to="/landing" className="text-sm text-muted-foreground hover:text-foreground">
-            ← Back to home
-          </Link>
         </div>
       </div>
     </div>
