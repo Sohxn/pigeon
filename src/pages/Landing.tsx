@@ -14,7 +14,7 @@ export default function Landing() {
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
       <header className="flex items-center justify-between p-6 max-w-6xl mx-auto">
-        <h1 className="text-xl font-bold">Pigeon Mail</h1>
+        <h1 className="text-xl font-bold">FeatherMail</h1>
         <div className="flex gap-3">
           <button
             onClick={() => navigate("/login")}

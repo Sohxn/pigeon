@@ -80,7 +80,7 @@ export default function EmailSidebar({
           <div className="w-8 h-8 bg-foreground rounded-md flex items-center justify-center">
             <Command className="w-4 h-4 text-background" />
           </div>
-          <span className="font-semibold tracking-tight">Pigeon Mail</span>
+          <span className="font-semibold tracking-tight">Feathermail</span>
         </div>
       </div>
 
