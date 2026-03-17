@@ -3,7 +3,7 @@ from flask_cors import CORS
 from config import Config
 from services.gmail_service import GmailService
 from services.supa_auth import SupabaseService
-
+import os
 
 #testing
 app = Flask(__name__)
