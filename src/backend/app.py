@@ -16,6 +16,10 @@ gmail_service = GmailService(
     Config.google_client_secret,
     Config.redirect_uri
 )
+
+print("URL:", os.getenv("SUPABASE_URL"))
+print("KEY:", os.getenv("SUPABASE_KEY"))
+
 supabase_service = SupabaseService(
     Config.supabase_url,
     Config.supabase_key
