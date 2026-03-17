@@ -20,9 +20,9 @@ class GmailService:
 
     def exchange_code_for_tokens(self, auth_code):
         """Exchange authorization code for access + refresh tokens"""
-        print(f"~Backend redirect_uri: {self.redirect_uri}")
-        print(f"~Backend client_id: {self.client_id}")
-        print(f"~Auth code received: {auth_code[:20]}...")
+        print(f"~Backend redirect_uri: {self.redirect_uri}", flush=True)
+        print(f"~Backend client_id: {self.client_id}", flush=True)
+        print(f"~Auth code received: {auth_code[:20]}...", flush=True)
 
         flow = Flow.from_client_config(
             {
@@ -45,7 +45,7 @@ class GmailService:
             ]
         )
         flow.redirect_uri = self.redirect_uri
-        print(f"~Flow redirect_uri: {flow.redirect_uri}")
+        print(f"~Flow redirect_uri: {flow.redirect_uri}", flush=True)
 
         try:
             flow.fetch_token(code=auth_code)
@@ -61,7 +61,7 @@ class GmailService:
                 'history_id': profile.get('historyId'),   # <-- capture on first connect
             }
         except Exception as e:
-            print(f"!!! Token exchange error: {e}")
+            print(f"!!! Token exchange error: {e}", flush=True)
             raise
 
     def get_gmail_service(self, access_token, refresh_token):
@@ -108,7 +108,7 @@ class GmailService:
             return {'emails': emails, 'history_id': history_id, 'is_full_sync': True}
 
         except HttpError as error:
-            print(f'Gmail API error during full sync: {error}')
+            print(f'Gmail API error during full sync: {error}', flush=True)
             return {'emails': [], 'history_id': None, 'is_full_sync': True}
 
     def fetch_emails_incremental(self, access_token, refresh_token, start_history_id):
@@ -156,15 +156,15 @@ class GmailService:
                 if email_data:
                     emails.append(email_data)
 
-            print(f"Incremental sync: {len(emails)} new emails since historyId={start_history_id}, new historyId={new_history_id}")
+            print(f"Incremental sync: {len(emails)} new emails since historyId={start_history_id}, new historyId={new_history_id}", flush=True)
             return {'emails': emails, 'history_id': new_history_id, 'is_full_sync': False}
 
         except HttpError as error:
             # 404 means the historyId is too old — Gmail only keeps ~30 days of history
             if error.resp.status == 404:
-                print(f"History ID expired (404), falling back to full sync")
+                print(f"History ID expired (404), falling back to full sync", flush=True)
                 return None  # Signal to caller to do a full sync
-            print(f'Gmail API error during incremental sync: {error}')
+            print(f'Gmail API error during incremental sync: {error}', flush=True)
             return {'emails': [], 'history_id': start_history_id, 'is_full_sync': False}
 
     # ── EMAIL PARSING ─────────────────────────────────────────────────────
@@ -205,7 +205,7 @@ class GmailService:
                 'is_starred': 'STARRED' in message.get('labelIds', []),
             }
         except Exception as e:
-            print(f'Error fetching email {msg_id}: {e}')
+            print(f'Error fetching email {msg_id}: {e}', flush=True)
             return None
 
     def _get_email_body(self, payload):

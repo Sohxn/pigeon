@@ -26,5 +26,4 @@ dist-ssr
 # Environment variables (dotenv)
 .env
 .env.*
-pigeon.env
 !.env.example

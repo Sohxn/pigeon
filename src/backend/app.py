@@ -4,6 +4,8 @@ from config import Config
 from services.gmail_service import GmailService
 from services.supa_auth import SupabaseService
 import os
+import logging 
+
 
 #testing
 app = Flask(__name__)
@@ -49,7 +51,7 @@ def gmail_oauth_callback():
             .execute()
 
         is_first = len(existing.data) == 0
-        print("first account — marking as primary" if is_first else "additional account")
+        print("first account — marking as primary" if is_first else "additional account", flush=True)
 
         account_data = {
             'user_id': user_id,
@@ -74,7 +76,7 @@ def gmail_oauth_callback():
         })
 
     except Exception as e:
-        print(f'OAuth error: {e}')
+        print(f'OAuth error: {e}', flush=True)
         return jsonify({'success': False, 'error': str(e)}), 400
 
 
@@ -114,14 +116,14 @@ def sync_gmail():
                     start_history_id=history_id
                 )
                 if result is None:
-                    print(f"{email_address}: history expired, falling back to full sync")
+                    print(f"{email_address}: history expired, falling back to full sync", flush=True)
                     result = gmail_service.fetch_emails_full(
                         access_token=account['access_token'],
                         refresh_token=account['refresh_token'],
                         max_results=50
                     )
             else:
-                print(f"{email_address}: first sync — full fetch")
+                print(f"{email_address}: first sync — full fetch", flush=True)
                 result = gmail_service.fetch_emails_full(
                     access_token=account['access_token'],
                     refresh_token=account['refresh_token'],
@@ -151,7 +153,7 @@ def sync_gmail():
             sync_type = "full" if result.get('is_full_sync') else "incremental"
             print(
                 f"{email_address}: {sync_type} sync — "
-                f"{len(emails_to_save)} emails, historyId={result.get('history_id')}"
+                f"{len(emails_to_save)} emails, historyId={result.get('history_id')}", flush=True
             )
 
         return jsonify({
@@ -161,7 +163,7 @@ def sync_gmail():
         })
 
     except Exception as e:
-        print(f'Sync error: {e}')
+        print(f'Sync error: {e}', flush=True)
         return jsonify({'error': str(e)}), 500
 
 
@@ -214,6 +216,6 @@ if __name__ == '__main__':
     debug = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
     
     print(f" Starting Flask development server on port {port}")
-    print(f" Debug mode: {debug}")
+    print(f" Debug mode: {debug}", flush=True)
     
     app.run(host='0.0.0.0',port=port,debug=debug)

@@ -71,15 +71,15 @@ class SupabaseService:
                     .update(payload)\
                     .eq('id', account_id)\
                     .execute()
-                print(f"history_id saved for {email_address or account_id}: {history_id}")
+                print(f"history_id saved for {email_address or account_id}: {history_id}", flush=True)
                 return
             except Exception as e:
                 wait = 0.5 * (2 ** attempt)  # 0.5s, 1s, 2s
-                print(f"update_account_history_id attempt {attempt + 1} failed: {e} — retrying in {wait}s")
+                print(f"update_account_history_id attempt {attempt + 1} failed: {e} — retrying in {wait}s", flush=True)
                 time.sleep(wait)
                 self._refresh_client()
 
-        print(f"ERROR: could not save history_id for {email_address or account_id} after 3 attempts")
+        print(f"ERROR: could not save history_id for {email_address or account_id} after 3 attempts", flush=True)
 
     # ── EMAILS ────────────────────────────────────────────────────────────
 
@@ -100,11 +100,11 @@ class SupabaseService:
                 return result.data
             except Exception as e:
                 wait = 0.5 * (2 ** attempt)
-                print(f"save_emails_batch attempt {attempt + 1} failed: {e} — retrying in {wait}s")
+                print(f"save_emails_batch attempt {attempt + 1} failed: {e} — retrying in {wait}s", flush=True)
                 time.sleep(wait)
                 self._refresh_client()
 
-        print('ERROR: save_emails_batch failed after 3 attempts')
+        print('ERROR: save_emails_batch failed after 3 attempts', flush=True)
         return []
 
     def get_emails(self, user_id, limit=100):
