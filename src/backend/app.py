@@ -4,14 +4,13 @@ from config import Config
 from services.gmail_service import GmailService
 from services.supa_auth import SupabaseService
 
-#development
+
+#testing
 app = Flask(__name__)
-CORS(app)
+allowed_origins_frontend = os.getenv('ALLOWED_ORIGINS', 'http://localhost:8080').split(',')
+CORS(app, origins=allowed_origins_frontend)
 
-
-#production
-
-
+#init
 gmail_service = GmailService(
     Config.google_client_id,
     Config.google_client_secret,
@@ -24,14 +23,12 @@ supabase_service = SupabaseService(
 
 
 # ── HEALTH ────────────────────────────────────────────────────────────────
-
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({'status': 'healthy', 'service': 'pigeon-backend'})
 
 
 # ── OAUTH CALLBACK ────────────────────────────────────────────────────────
-
 @app.route('/api/gmail/oauth/callback', methods=['POST'])
 def gmail_oauth_callback():
     """Exchange OAuth code for tokens and create/update email_account row."""
@@ -208,4 +205,11 @@ def send_email():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    import os
+    port = int(os.getenv('PORT', 5000))
+    debug = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
+    
+    print(f" Starting Flask development server on port {port}")
+    print(f" Debug mode: {debug}")
+    
+    app.run(host='0.0.0.0',port=port,debug=debug)
