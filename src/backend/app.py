@@ -122,12 +122,14 @@ def sync_gmail():
                         refresh_token=account['refresh_token'],
                         max_results=50
                     )
+            
+            # increase max_results for initial sync  (now 100)
             else:
                 print(f"{email_address}: first sync — full fetch", flush=True)
                 result = gmail_service.fetch_emails_full(
                     access_token=account['access_token'],
                     refresh_token=account['refresh_token'],
-                    max_results=50
+                    max_results=100
                 )
 
             # ── Stamp each email with user/account IDs ────────────────────
