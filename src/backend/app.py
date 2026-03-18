@@ -69,6 +69,14 @@ def gmail_oauth_callback():
             .upsert(account_data, on_conflict='user_id,email_address')\
             .execute()
 
+        #enable push notifications for this account when user connects
+        push_service = GmailPushService(gmail_service)
+        push_service.watch_inbox(
+            user_email=tokens['gmail_email'],
+            access_token=tokens['access_token'],
+            refresh_token=tokens['refresh_token']
+        )
+
         return jsonify({
             'success': True,
             'gmail_email': tokens['gmail_email'],
@@ -210,6 +218,63 @@ def send_email():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/gmail/webhook', methods=['POST'])
+def gmail_webhook():
+    """
+    Gmail POSTs here when new email arrives.
+    This is INSTANT - no polling needed!
+    """
+    try:
+        # Get notification from Gmail
+        notification = request.json
+        
+        # Decode the Pub/Sub message
+        message = json.loads(
+            base64.b64decode(notification['message']['data']).decode()
+        )
+        
+        email_address = message['emailAddress']
+        history_id = message['historyId']
+        
+        # Get user from database
+        account = supabase_service.client.table('email_accounts')\
+            .select('*')\
+            .eq('email_address', email_address)\
+            .single()\
+            .execute()
+        
+        if not account.data:
+            return 'OK', 200  # Unknown user, ignore
+        
+        # Fetch only NEW emails using incremental sync
+        result = gmail_service.fetch_emails_incremental(
+            access_token=account.data['access_token'],
+            refresh_token=account.data['refresh_token'],
+            start_history_id=account.data['last_history_id']
+        )
+        
+        # Save new emails to database
+        if result['emails']:
+            for email_data in result['emails']:
+                email_data['user_id'] = account.data['user_id']
+                email_data['account_id'] = account.data['id']
+            
+            supabase_service.save_emails_batch(result['emails'])
+            
+            # Update history ID
+            supabase_service.update_account_history_id(
+                account.data['id'],
+                history_id,
+                email_address
+            )
+        
+        return 'OK', 200
+    
+    except Exception as e:
+        print(f'Webhook error: {e}', flush=True)
+        return 'ERROR', 500
 
 
 if __name__ == '__main__':

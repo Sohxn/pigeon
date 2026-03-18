@@ -2,12 +2,13 @@ import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useEmailData } from "@/hooks/useEmailData";
-import { useEmailStore } from "@/store/emailStore";
+import { Email, useEmailStore } from "@/store/emailStore";
 import { toast } from "sonner";
 import EmailSidebar from "@/components/email/EmailSidebar";
 import EmailListItem from "@/components/email/EmailListItem";
 import EmailView from "@/components/email/EmailView";
 import { RefreshCw } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -112,6 +113,40 @@ useEffect(() => {
   return () => clearInterval(interval);
 }, [isAuthenticated, sync]);
 
+
+
+// push notifications will trigger sync, so no need for extra polling here. The periodic sync is just a fallback to catch any missed updates.
+
+useEffect(() => {
+  if (!isAuthenticated) return;
+  
+  // Subscribe to new emails in Supabase
+  const channel = supabase.channel('emails-realtime').on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'emails',
+        // filter: `user_id=eq.${user.id}`  // Only this user's emails
+      },
+      (payload) => {
+        console.log('📧 New email received!', payload.new);
+        
+        // Add email to store instantly
+        const newEmail = payload.new as Email;
+        const currentEmails = useEmailStore.getState().emails;
+        useEmailStore.getState().setEmails([newEmail, ...currentEmails]);
+        
+        // Show toast notification
+        toast.success(`New email from ${newEmail.from_name || newEmail.from_email}`);
+      }
+    )
+    .subscribe();
+  
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, [isAuthenticated]);
 
 
   // ── Loading state ────────────────────────────────────────────────────────
