@@ -195,3 +195,10 @@
     border-radius: 3px;
   }
 }
+
+@font-face {
+  font-family: 'Magnolia Script';
+  src: url('/src/assets/fonts/MagnoliaScript.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}

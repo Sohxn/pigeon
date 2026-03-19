@@ -80,7 +80,7 @@ export default function EmailSidebar({
           <div className="w-8 h-8 bg-foreground rounded-md flex items-center justify-center">
             <Command className="w-4 h-4 text-background" />
           </div>
-          <span className="font-semibold tracking-tight">Feathermail</span>
+          <span className="font-semibold tracking-tight" style={{ fontFamily: "'Magnolia Script', cursive" }}>Feathermail</span>
         </div>
       </div>
 
