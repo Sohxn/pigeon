@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useEmailData } from "@/hooks/useEmailData";
@@ -7,29 +7,42 @@ import { toast } from "sonner";
 import EmailSidebar from "@/components/email/EmailSidebar";
 import EmailListItem from "@/components/email/EmailListItem";
 import EmailView from "@/components/email/EmailView";
+import { ComposeModal, ComposeInitData } from "@/components/email/ComposeModal";
 import { RefreshCw } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export default function Index() {
   const navigate = useNavigate();
-  // const { isAuthenticated } = useAuth();
   const { loadData, sync, isLoading, isSyncing } = useEmailData();
   const { isAuthenticated, loading: authLoading } = useAuth();
 
-  // ── Select only raw/primitive state from the store ──────────────────────
+  // ── Compose state ────────────────────────────────────────────────────────
+  const [isComposeOpen, setIsComposeOpen]       = useState(false);
+  const [ComposeInitData, setComposeInitData] = useState<ComposeInitData | undefined>();
+
+  const openCompose = useCallback((initialData?: ComposeInitData) => {
+    setComposeInitData(initialData);
+    setIsComposeOpen(true);
+  }, []);
+
+  const closeCompose = useCallback(() => {
+    setIsComposeOpen(false);
+    // Clear initialData after the close animation finishes
+    setTimeout(() => setComposeInitData(undefined), 300);
+  }, []);
+
+  // ── Store selectors ──────────────────────────────────────────────────────
   const accounts          = useEmailStore(state => state.accounts);
   const allEmails         = useEmailStore(state => state.emails);
   const selectedEmailId   = useEmailStore(state => state.selectedEmailId);
   const selectedAccountId = useEmailStore(state => state.selectedAccountId);
   const activeFolder      = useEmailStore(state => state.activeFolder);
 
-  // Actions
   const setSelectedEmailId   = useEmailStore(state => state.setSelectedEmailId);
   const setSelectedAccountId = useEmailStore(state => state.setSelectedAccountId);
   const setActiveFolder      = useEmailStore(state => state.setActiveFolder);
 
-  // ── Derive everything with useMemo — no store functions inside selectors ─
-
+  // ── Derived state ────────────────────────────────────────────────────────
   const emails = useMemo(() => {
     let filtered = allEmails;
 
@@ -77,77 +90,57 @@ export default function Index() {
     };
   }, [allEmails, selectedAccountId]);
 
-  // ── Auth guard ───────────────────────────────────────────────────────────
-useEffect(() => {
-  if (authLoading) return;
-  
-  if (!isAuthenticated) {
-    navigate("/login");
-    return;
-  }
-  
-  // Load emails from database immediately (FAST)
-  loadData();
-  
-  // Auto-sync new emails in background after 2 seconds
-  const syncTimer = setTimeout(() => {
-    console.log('feather_task_running: Auto-syncing new emails in background...');
-    sync(); // This runs in background, doesn't block UI
-  }, 2000);
-  
-  return () => clearTimeout(syncTimer);
-}, [isAuthenticated, authLoading, navigate]);
+  // ── Auth guard + initial load ────────────────────────────────────────────
+  useEffect(() => {
+    if (authLoading) return;
 
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
 
+    loadData();
 
-// periodic auto sync 
-useEffect(() => {
-  if (!isAuthenticated) return;
-  
-  // Auto-sync every 30 seconds
-  const interval = setInterval(() => {
-    console.log('🔄 Periodic sync...');
-    sync();
-  }, 30000); // 30 seconds
-  
-  return () => clearInterval(interval);
-}, [isAuthenticated, sync]);
+    const syncTimer = setTimeout(() => {
+      sync();
+    }, 2000);
 
+    return () => clearTimeout(syncTimer);
+  }, [isAuthenticated, authLoading, navigate]);
 
+  // ── Periodic background sync ─────────────────────────────────────────────
+  useEffect(() => {
+    if (!isAuthenticated) return;
 
-// push notifications will trigger sync, so no need for extra polling here. The periodic sync is just a fallback to catch any missed updates.
+    const interval = setInterval(() => {
+      sync();
+    }, 30000);
 
-useEffect(() => {
-  if (!isAuthenticated) return;
-  
-  // Subscribe to new emails in Supabase
-  const channel = supabase.channel('emails-realtime').on(
-      'postgres_changes',
-      {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'emails',
-        // filter: `user_id=eq.${user.id}`  // Only this user's emails
-      },
-      (payload) => {
-        console.log('📧 New email received!', payload.new);
-        
-        // Add email to store instantly
-        const newEmail = payload.new as Email;
-        const currentEmails = useEmailStore.getState().emails;
-        useEmailStore.getState().setEmails([newEmail, ...currentEmails]);
-        
-        // Show toast notification
-        toast.success(`New email from ${newEmail.from_name || newEmail.from_email}`);
-      }
-    )
-    .subscribe();
-  
-  return () => {
-    supabase.removeChannel(channel);
-  };
-}, [isAuthenticated]);
+    return () => clearInterval(interval);
+  }, [isAuthenticated, sync]);
 
+  // ── Realtime new-email subscription ─────────────────────────────────────
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const channel = supabase
+      .channel('emails-realtime')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'emails' },
+        (payload) => {
+          const newEmail = payload.new as Email;
+          const currentEmails = useEmailStore.getState().emails;
+          useEmailStore.getState().setEmails([newEmail, ...currentEmails]);
+          toast.success(`New email from ${newEmail.from_name || newEmail.from_email}`);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [isAuthenticated]);
 
   // ── Loading state ────────────────────────────────────────────────────────
   if (isLoading) {
@@ -171,7 +164,7 @@ useEffect(() => {
       <EmailSidebar
         activeFolder={activeFolder}
         onFolderChange={setActiveFolder}
-        onCompose={() => toast.info("Compose coming soon")}
+        onCompose={() => openCompose()}
         onOpenSettings={() => toast.info("Settings coming soon")}
         folderCounts={folderCounts}
         accounts={accounts}
@@ -226,13 +219,23 @@ useEffect(() => {
       {/* Email Viewer */}
       <div className="flex-1 overflow-y-auto">
         {selectedEmail ? (
-          <EmailView email={selectedEmail} />
+          <EmailView
+            email={selectedEmail}
+            onReply={(data) => openCompose(data)}
+          />
         ) : (
           <div className="h-full flex items-center justify-center text-muted-foreground">
             Select an email to read
           </div>
         )}
       </div>
+
+      {/* Compose / Reply modal */}
+      <ComposeModal
+        isOpen={isComposeOpen}
+        onClose={closeCompose}
+        initData={ComposeInitData}
+      />
     </div>
   );
 }

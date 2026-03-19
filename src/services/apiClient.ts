@@ -209,6 +209,30 @@ export async function syncEmails() {
   });
 }
 
+
+// SENDING MAILS 
+// 1. Gmail
+export async function sendEmail(to:string, subject:string, body:string): Promise<void> {
+  // checking auth
+  const user = await getCurrentUser();
+  if(!user) throw new Error ('NOT AUTHENTICATED');
+
+  await apiRequest('/api/gmail/send',{method: 'POST', body: JSON.stringify({
+      user_id: user.id,
+      to,
+      subject,
+      body,
+    }),
+  });
+}
+
+// adding other providers later after MVP is ready
+
+
+
+// MISC FUNCTIONS IN INBOX
+
+// decide if we store this locally too and database ONLY WHEN ITS NEEDED because no point in increasing api costs this much
 /**
  * Mark email as read in database
  */
