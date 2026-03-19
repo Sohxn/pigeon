@@ -292,8 +292,8 @@ export default function Terms() {
               If you have questions or concerns about these Terms, please contact us:
             </p>
             <div className="bg-secondary/50 p-4 rounded-md">
-              <p className="text-base mb-2"><strong>Email:</strong> legal@Feathermail.com</p>
-              <p className="text-base mb-2"><strong>Support:</strong> support@Feathermail.com</p>
+              <p className="text-base mb-2"><strong>Email:</strong> sohan@feathermail.app</p>
+              <p className="text-base mb-2"><strong>Support:</strong> sohan@feathermail.app</p>
               <p className="text-base"><strong>Address:</strong> Feather Mail, 12E Baishnabghata Lane, Kolkata, West Bengal 700047, India </p>
             </div>
           </section>
