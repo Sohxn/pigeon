@@ -69,7 +69,8 @@ export default function Signup() {
             <p className="text-muted-foreground">Get started with Pigeon Mail</p>
           </div>
           
-          <div className="bg-card border border-border rounded-lg p-6">
+          {/* card */}
+          <div className="bg-card border border-border rounded-2xl rounded-2xl shadow-[28px_28px_50px_rgba(0,0,0,0.15),_-23px_-23px_45px_rgba(255,255,255,0.8)] p-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
                 <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded text-sm">
