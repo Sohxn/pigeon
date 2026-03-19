@@ -116,8 +116,18 @@ def sync_gmail():
             email_address = account.get('email_address', account['id'])
             history_id = account.get('last_history_id')
 
+            # ── Check if this account actually has emails in the DB ───────
+            existing = supabase_service.client.table('emails')\
+                .select('id')\
+                .eq('account_id', account['id'])\
+                .limit(1)\
+                .execute()
+            has_emails = len(existing.data) > 0
+
             # ── Choose sync strategy ──────────────────────────────────────
-            if history_id:
+            # Only do incremental if we BOTH have a history_id AND already
+            # have emails stored. If the DB was wiped, force a full sync.
+            if history_id and has_emails:
                 result = gmail_service.fetch_emails_incremental(
                     access_token=account['access_token'],
                     refresh_token=account['refresh_token'],
@@ -130,15 +140,17 @@ def sync_gmail():
                         refresh_token=account['refresh_token'],
                         max_results=50
                     )
-            
-            # increase max_results for initial sync  (now 100)
+
+            # fix no emails in db (corner case)
             else:
-                print(f"{email_address}: first sync — full fetch", flush=True)
+                print(f"{email_address}: no emails in DB — full fetch", flush=True)
                 result = gmail_service.fetch_emails_full(
                     access_token=account['access_token'],
                     refresh_token=account['refresh_token'],
                     max_results=100
                 )
+
+
 
             # ── Stamp each email with user/account IDs ────────────────────
             emails_to_save = []
