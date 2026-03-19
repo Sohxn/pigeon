@@ -27,17 +27,17 @@ export default function Terms() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">1. Acceptance of Terms</h2>
             <p className="text-base leading-relaxed mb-4">
-              Welcome to Pigeon Mail. By accessing or using our email client application ("Service"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you may not use our Service.
+              Welcome to Feather Mail. By accessing or using our email client application ("Service"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you may not use our Service.
             </p>
             <p className="text-base leading-relaxed">
-              These Terms constitute a legally binding agreement between you and Pigeon Mail, Inc. ("Pigeon Mail," "we," "us," or "our"). Please read them carefully before using our Service.
+              These Terms constitute a legally binding agreement between you and Feather Mail, Inc. ("Feather Mail," "we," "us," or "our"). Please read them carefully before using our Service.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold mb-4">2. Description of Service</h2>
             <p className="text-base leading-relaxed mb-4">
-              Pigeon Mail is an email client application that allows users to:
+              Feather Mail is an email client application that allows users to:
             </p>
             <ul className="list-disc pl-6 space-y-2 text-base leading-relaxed mb-4">
               <li>Connect and manage multiple email accounts in a unified inbox</li>
@@ -47,14 +47,14 @@ export default function Terms() {
               <li>Sync email data across multiple devices</li>
             </ul>
             <p className="text-base leading-relaxed">
-              Pigeon Mail is provided as a tool to help users manage their email more efficiently. The Service integrates with third-party email providers through their respective APIs to access your email data.
+              Feather Mail is provided as a tool to help users manage their email more efficiently. The Service integrates with third-party email providers through their respective APIs to access your email data.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold mb-4">3. User Accounts and Registration</h2>
             <p className="text-base leading-relaxed mb-4">
-              To use Pigeon Mail, you must:
+              To use Feather Mail, you must:
             </p>
             <ul className="list-disc pl-6 space-y-2 text-base leading-relaxed mb-4">
               <li>Create an account by providing accurate and complete information</li>
@@ -71,7 +71,7 @@ export default function Terms() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">4. Email Account Connection</h2>
             <p className="text-base leading-relaxed mb-4">
-              When you connect an email account to Pigeon Mail:
+              When you connect an email account to Feather Mail:
             </p>
             <ul className="list-disc pl-6 space-y-2 text-base leading-relaxed mb-4">
               <li>You authorize us to access your email data through the email provider's API</li>
@@ -87,7 +87,7 @@ export default function Terms() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">5. Acceptable Use Policy</h2>
             <p className="text-base leading-relaxed mb-4">
-              You agree to use Pigeon Mail only for lawful purposes and in accordance with these Terms. You agree NOT to:
+              You agree to use Feather Mail only for lawful purposes and in accordance with these Terms. You agree NOT to:
             </p>
             <ul className="list-disc pl-6 space-y-2 text-base leading-relaxed mb-4">
               <li>Use the Service to send spam, unsolicited emails, or bulk commercial messages</li>
@@ -108,7 +108,7 @@ export default function Terms() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">6. Third-Party Services and Content</h2>
             <p className="text-base leading-relaxed mb-4">
-              Pigeon Mail integrates with third-party email providers and services:
+              Feather Mail integrates with third-party email providers and services:
             </p>
             <ul className="list-disc pl-6 space-y-2 text-base leading-relaxed mb-4">
               <li>We are not responsible for the content, availability, or practices of third-party services</li>
@@ -117,14 +117,14 @@ export default function Terms() {
               <li>Any dealings between you and third parties are solely between you and such third parties</li>
             </ul>
             <p className="text-base leading-relaxed">
-              Pigeon Mail is not affiliated with, endorsed by, or sponsored by Google, Microsoft, Yahoo, or any other email provider. All trademarks and brand names are the property of their respective owners.
+              Feather Mail is not affiliated with, endorsed by, or sponsored by Google, Microsoft, Yahoo, or any other email provider. All trademarks and brand names are the property of their respective owners.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold mb-4">7. Intellectual Property Rights</h2>
             <p className="text-base leading-relaxed mb-4">
-              The Service and its original content, features, and functionality are owned by Pigeon Mail and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws.
+              The Service and its original content, features, and functionality are owned by Feather Mail and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws.
             </p>
             <p className="text-base leading-relaxed mb-4">
               You retain all rights to the email content you create, send, or receive through the Service. By using the Service, you grant us a limited license to:
@@ -152,10 +152,10 @@ export default function Terms() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">9. Subscription Plans and Payments</h2>
             <p className="text-base leading-relaxed mb-4">
-              Pigeon Mail offers both free and paid subscription plans:
+              Feather Mail offers only paid subscription plans:
             </p>
             <ul className="list-disc pl-6 space-y-2 text-base leading-relaxed mb-4">
-              <li><strong>Free Plan:</strong> Limited features with restrictions on number of accounts and storage</li>
+              {/* <li><strong>Free Plan:</strong> Limited features with restrictions on number of accounts and storage</li> */}
               <li><strong>Pro Plan:</strong> Enhanced features with unlimited accounts and increased storage</li>
               <li><strong>Team Plan:</strong> Business features with team collaboration and priority support</li>
             </ul>
@@ -189,7 +189,7 @@ export default function Terms() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">11. Limitation of Liability</h2>
             <p className="text-base leading-relaxed mb-4">
-              TO THE MAXIMUM EXTENT PERMITTED BY LAW, PIGEON MAIL SHALL NOT BE LIABLE FOR:
+              TO THE MAXIMUM EXTENT PERMITTED BY LAW, Feather MAIL SHALL NOT BE LIABLE FOR:
             </p>
             <ul className="list-disc pl-6 space-y-2 text-base leading-relaxed mb-4">
               <li>Any indirect, incidental, special, consequential, or punitive damages</li>
@@ -206,7 +206,7 @@ export default function Terms() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">12. Indemnification</h2>
             <p className="text-base leading-relaxed">
-              You agree to indemnify, defend, and hold harmless Pigeon Mail and its officers, directors, employees, and agents from any claims, liabilities, damages, losses, and expenses (including reasonable attorneys' fees) arising from:
+              You agree to indemnify, defend, and hold harmless Feather Mail and its officers, directors, employees, and agents from any claims, liabilities, damages, losses, and expenses (including reasonable attorneys' fees) arising from:
             </p>
             <ul className="list-disc pl-6 space-y-2 text-base leading-relaxed mt-4">
               <li>Your use or misuse of the Service</li>
@@ -232,7 +232,7 @@ export default function Terms() {
             </p>
             <ul className="list-disc pl-6 space-y-2 text-base leading-relaxed mb-4">
               <li>Deleting your account through the application settings</li>
-              <li>Contacting our support team at support@pigeonmail.com</li>
+              <li>Contacting our support team at support@Feathermail.com</li>
             </ul>
             <p className="text-base leading-relaxed">
               Upon termination, your right to use the Service will immediately cease, and we will delete your account data in accordance with our Privacy Policy.
@@ -282,7 +282,7 @@ export default function Terms() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">17. Entire Agreement</h2>
             <p className="text-base leading-relaxed">
-              These Terms, together with our Privacy Policy, constitute the entire agreement between you and Pigeon Mail regarding the Service and supersede all prior agreements and understandings.
+              These Terms, together with our Privacy Policy, constitute the entire agreement between you and Feather Mail regarding the Service and supersede all prior agreements and understandings.
             </p>
           </section>
 
@@ -292,16 +292,16 @@ export default function Terms() {
               If you have questions or concerns about these Terms, please contact us:
             </p>
             <div className="bg-secondary/50 p-4 rounded-md">
-              <p className="text-base mb-2"><strong>Email:</strong> legal@pigeonmail.com</p>
-              <p className="text-base mb-2"><strong>Support:</strong> support@pigeonmail.com</p>
-              <p className="text-base"><strong>Address:</strong> Pigeon Mail, Inc., 123 Privacy Lane, San Francisco, CA 94102, USA</p>
+              <p className="text-base mb-2"><strong>Email:</strong> legal@Feathermail.com</p>
+              <p className="text-base mb-2"><strong>Support:</strong> support@Feathermail.com</p>
+              <p className="text-base"><strong>Address:</strong> Feather Mail, 12E Baishnabghata Lane, Kolkata, West Bengal 700047, India </p>
             </div>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold mb-4">19. User Responsibilities</h2>
             <p className="text-base leading-relaxed">
-              As a user of Pigeon Mail, you are solely responsible for:
+              As a user of Feather Mail, you are solely responsible for:
             </p>
             <ul className="list-disc pl-6 space-y-2 text-base leading-relaxed">
               <li>The content of emails you send through the Service</li>
@@ -316,13 +316,13 @@ export default function Terms() {
         {/* Footer note */}
         <div className="mt-12 pt-6 border-t border-border">
           <p className="text-sm text-muted-foreground">
-            <strong>Last Updated:</strong> March 17, 2026
+            <strong>Last Updated:</strong> March 19, 2026
           </p>
           <p className="text-sm text-muted-foreground mt-2">
-            <strong>Effective Date:</strong> March 17, 2026
+            <strong>Effective Date:</strong> March 19, 2026
           </p>
           <p className="text-sm text-muted-foreground mt-4">
-            By using Pigeon Mail, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
+            By using Feather Mail, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
           </p>
         </div>
       </main>
