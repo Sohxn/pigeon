@@ -14,7 +14,7 @@ import { isDev, devUser } from '@/lib/devMode';
 export function useAuth() {
   // added development condition
   const [user, setUser] = useState<any>(isDev? devUser : null);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(!isDev); // Add loading state
   const navigate = useNavigate();
   
   // Check if user is logged in on mount
@@ -59,6 +59,6 @@ export function useAuth() {
     signUp,
     signIn,
     signOut,
-    isAuthenticated: isDev? devUser : !!user, 
+    isAuthenticated: isDev? true : !!user, 
   };
 }

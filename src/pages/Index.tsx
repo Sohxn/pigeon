@@ -10,6 +10,7 @@ import EmailView from "@/components/email/EmailView";
 import { ComposeModal, ComposeInitData } from "@/components/email/ComposeModal";
 import { RefreshCw } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { isDev } from "@/lib/devMode";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -121,7 +122,7 @@ export default function Index() {
 
   // ── Realtime new-email subscription ─────────────────────────────────────
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || isDev) return;
 
     const channel = supabase
       .channel('emails-realtime')
