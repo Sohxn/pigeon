@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { ExternalLink } from "lucide-react";
+import { isDev } from "@/lib/devMode";
 
 export default function Login() {
   const { signIn } = useAuth();
@@ -9,6 +10,16 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+
+  // for dev mode 
+  // skips auth for UI changes
+  useEffect(() => {
+    if(isDev){
+      navigate("/");
+    }
+  });
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
