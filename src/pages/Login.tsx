@@ -65,7 +65,6 @@ export default function Login() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold mb-2">Welcome back</h1>
-            <p className="text-muted-foreground">Log in to Pigeon Mail</p>
           </div>
 
           

@@ -140,7 +140,7 @@ export default function Dashboard() {
       {/* Header */}
       <header className="border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold">Pigeon Mail</h1>
+          <h1 className="text-xl font-bold" style={{ fontFamily: "'Magnolia Script', cursive" }}>Feathermail</h1>
           <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground">{user?.email}</span>
             <button

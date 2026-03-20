@@ -66,7 +66,6 @@ export default function Signup() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold mb-2">Create your account</h1>
-            <p className="text-muted-foreground">Get started with Pigeon Mail</p>
           </div>
           
           {/* card */}
