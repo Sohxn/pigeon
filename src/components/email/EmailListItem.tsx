@@ -24,7 +24,9 @@ export default function EmailListItem({ email, isSelected, onClick }: EmailListI
     <div
       onClick={onClick}
       className={`
-        p-4 border-b border-border cursor-pointer hover:bg-secondary/50 transition-colors
+        rounded-2xl
+        ${isSelected? 'shadow-2xl' : 'shadow-md'}
+        p-4 border-white border-[3px] cursor-pointer hover:bg-secondary/50 transition-colors
         ${isSelected ? 'bg-secondary' : ''}
         ${!email.is_read ? 'bg-blue-50/50 dark:bg-blue-950/20' : ''}
       `}
