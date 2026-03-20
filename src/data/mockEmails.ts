@@ -1,3 +1,4 @@
+// needed for dev mode
 import { Email, EmailFolder } from "@/types/email";
 
 export const folders: EmailFolder[] = [

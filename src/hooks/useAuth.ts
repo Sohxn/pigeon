@@ -8,13 +8,21 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import * as api from '@/services/apiClient';
 
+// dev mode
+import { isDev, devUser } from '@/lib/devMode';
+
 export function useAuth() {
-  const [user, setUser] = useState<any>(null);
+  // added development condition
+  const [user, setUser] = useState<any>(isDev? devUser : null);
   const [loading, setLoading] = useState(true); // Add loading state
   const navigate = useNavigate();
   
   // Check if user is logged in on mount
   useEffect(() => {
+    // dev mode
+    if(isDev) return;
+
+    // production
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user || null);
       setLoading(false); // Auth check complete
@@ -51,6 +59,6 @@ export function useAuth() {
     signUp,
     signIn,
     signOut,
-    isAuthenticated: !!user,
+    isAuthenticated: isDev? devUser : !!user, 
   };
 }

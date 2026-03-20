@@ -8,6 +8,8 @@ import { useEffect } from 'react';
 import { useEmailStore } from '@/store/emailStore';
 import * as api from '@/services/apiClient';
 import { toast } from 'sonner';
+import { isDev } from '@/lib/devMode';
+import { mockEmails } from '@/data/mockEmails';
 
 export function useEmailData() {
   const store = useEmailStore();
@@ -17,6 +19,32 @@ export function useEmailData() {
    * Called on initial page load
    */
   const loadData = async () => {
+    // dev mode
+    if(isDev){
+      store.setEmails(mockEmails as any);
+      store.setAccounts(
+        [
+          {
+            id: 'dev-account-1',
+            user_id: 'sohxn_001',
+            email_address: 'sohxn@devtest.com',
+            provider: 'gmail',
+            is_primary: true,
+            is_connected: true,
+            last_sync: null,
+          }
+        ]
+      );
+    
+      if(mockEmails.length > 0){
+        store.setSelectedEmailId(mockEmails[0].id);
+      }
+
+      store.setLoading(false);
+      return;
+    }
+    
+    
     try {
       store.setLoading(true);
       store.setError(null);
@@ -61,6 +89,14 @@ export function useEmailData() {
    * Called when user clicks "Sync" button
    */
   const sync = async () => {
+
+    // dev mode
+    if(isDev){
+      toast.info('dev mode: loading mock emails')
+      return;
+    }
+
+
     try {
       store.setSyncing(true);
       
