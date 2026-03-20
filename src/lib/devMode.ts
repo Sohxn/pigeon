@@ -1,4 +1,4 @@
-export const isDev  = import.meta.env.ISDEV;
+export const isDev  = import.meta.env.VITE_ISDEV === 'true';
 
 export const devUser = {
     id: "sohxn_001",

@@ -19,7 +19,7 @@ export default function Login() {
     if(isDev){
       navigate("/");
     }
-  });
+  },[]);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
