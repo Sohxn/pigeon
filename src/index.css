@@ -9,138 +9,138 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 4%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 4%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 4%;
-
-    --primary: 0 0% 4%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 4%;
-
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
-
-    --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 4%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 0% 4%;
-
+    --background: #ffffff;
+    --foreground: #0a0a0a;
+ 
+    --card: #ffffff;
+    --card-foreground: #0a0a0a;
+ 
+    --popover: #ffffff;
+    --popover-foreground: #0a0a0a;
+ 
+    --primary: #0a0a0a;
+    --primary-foreground: #ffffff;
+ 
+    --secondary: #f5f5f5;
+    --secondary-foreground: #0a0a0a;
+ 
+    --muted: #f5f5f5;
+    --muted-foreground: #737373;
+ 
+    --accent: #f5f5f5;
+    --accent-foreground: #0a0a0a;
+ 
+    --destructive: #ef4343;
+    --destructive-foreground: #ffffff;
+ 
+    --border: #e5e5e5;
+    --input: #e5e5e5;
+    --ring: #0a0a0a;
+ 
     --radius: 0.375rem;
-
+ 
     /* Custom tokens */
-    --email-hover: 0 0% 98%;
-    --email-selected: 0 0% 95%;
-    
+    --email-hover: #fafafa;
+    --email-selected: #f2f2f2;
+ 
     /* iOS-style badge colors */
-    --badge-proposal-bg: 152 81% 95%;
-    --badge-proposal: 158 64% 32%;
-    --badge-followup-bg: 213 97% 95%;
-    --badge-followup: 213 94% 42%;
-    --badge-inquiry-bg: 270 91% 95%;
-    --badge-inquiry: 263 70% 50%;
-    --badge-invoice-bg: 43 96% 93%;
-    --badge-invoice: 32 95% 40%;
-    --badge-personal-bg: 330 81% 95%;
-    --badge-personal: 330 65% 50%;
-    --badge-newsletter-bg: 215 20% 93%;
-    --badge-newsletter: 215 16% 42%;
-    --badge-notification-bg: 220 13% 93%;
-    --badge-notification: 220 9% 46%;
-    --badge-amount-bg: 142 76% 93%;
-    --badge-amount: 142 72% 30%;
-    --badge-deadline-bg: 24 94% 93%;
-    --badge-deadline: 24 90% 42%;
-    --badge-overdue-bg: 0 84% 93%;
-    --badge-overdue: 0 72% 45%;
-    --badge-urgent-bg: 38 92% 93%;
-    --badge-urgent: 38 80% 40%;
-
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 0 0% 4%;
-    --sidebar-primary: 0 0% 4%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 96%;
-    --sidebar-accent-foreground: 0 0% 4%;
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 0 0% 4%;
+    --badge-proposal-bg: #e8fdf3;
+    --badge-proposal: #1d8660;
+    --badge-followup-bg: #e6f1ff;
+    --badge-followup: #0661d0;
+    --badge-inquiry-bg: #f2e7fe;
+    --badge-inquiry: #6b26d9;
+    --badge-invoice-bg: #fef5dc;
+    --badge-invoice: #c76c05;
+    --badge-personal-bg: #fde8f2;
+    --badge-personal: #d22d80;
+    --badge-newsletter-bg: #eaedf1;
+    --badge-newsletter: #5a687c;
+    --badge-notification-bg: #ebecef;
+    --badge-notification: #6b7280;
+    --badge-amount-bg: #e0fbe9;
+    --badge-amount: #15843e;
+    --badge-deadline-bg: #feeadc;
+    --badge-deadline: #cc580b;
+    --badge-overdue-bg: #fcdede;
+    --badge-overdue: #c52020;
+    --badge-urgent-bg: #fef2dd;
+    --badge-urgent: #b87c14;
+ 
+    --sidebar-background: #ffffff;
+    --sidebar-foreground: #0a0a0a;
+    --sidebar-primary: #0a0a0a;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #f5f5f5;
+    --sidebar-accent-foreground: #0a0a0a;
+    --sidebar-border: #e5e5e5;
+    --sidebar-ring: #0a0a0a;
   }
 
   .dark {
-    --background: 0 0% 4%;
-    --foreground: 0 0% 98%;
-
-    --card: 0 0% 4%;
-    --card-foreground: 0 0% 98%;
-
-    --popover: 0 0% 4%;
-    --popover-foreground: 0 0% 98%;
-
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 4%;
-
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 98%;
-
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 64%;
-
-    --accent: 0 0% 15%;
-    --accent-foreground: 0 0% 98%;
-
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 0 0% 83%;
-
-    --email-hover: 0 0% 8%;
-    --email-selected: 0 0% 12%;
-    
+    --background: #0a0a0a;
+    --foreground: #fafafa;
+ 
+    --card: #0a0a0a;
+    --card-foreground: #fafafa;
+ 
+    --popover: #0a0a0a;
+    --popover-foreground: #fafafa;
+ 
+    --primary: #fafafa;
+    --primary-foreground: #0a0a0a;
+ 
+    --secondary: #262626;
+    --secondary-foreground: #fafafa;
+ 
+    --muted: #262626;
+    --muted-foreground: #a3a3a3;
+ 
+    --accent: #262626;
+    --accent-foreground: #fafafa;
+ 
+    --destructive: #7c1d1d;
+    --destructive-foreground: #fafafa;
+ 
+    --border: #333333;
+    --input: #333333;
+    --ring: #d4d4d4;
+ 
+    --email-hover: #141414;
+    --email-selected: #1f1f1f;
+ 
     /* iOS-style badge colors - dark mode */
-    --badge-proposal-bg: 158 50% 15%;
-    --badge-proposal: 152 60% 55%;
-    --badge-followup-bg: 213 50% 18%;
-    --badge-followup: 213 90% 65%;
-    --badge-inquiry-bg: 263 40% 18%;
-    --badge-inquiry: 263 65% 70%;
-    --badge-invoice-bg: 32 50% 15%;
-    --badge-invoice: 38 90% 60%;
-    --badge-personal-bg: 330 40% 18%;
-    --badge-personal: 330 60% 65%;
-    --badge-newsletter-bg: 215 15% 18%;
-    --badge-newsletter: 215 15% 60%;
-    --badge-notification-bg: 220 10% 18%;
-    --badge-notification: 220 10% 58%;
-    --badge-amount-bg: 142 40% 15%;
-    --badge-amount: 142 60% 55%;
-    --badge-deadline-bg: 24 50% 15%;
-    --badge-deadline: 24 85% 60%;
-    --badge-overdue-bg: 0 50% 15%;
-    --badge-overdue: 0 70% 60%;
-    --badge-urgent-bg: 38 50% 15%;
-    --badge-urgent: 38 75% 60%;
-
-    --sidebar-background: 0 0% 4%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 0 0% 98%;
-    --sidebar-primary-foreground: 0 0% 4%;
-    --sidebar-accent: 0 0% 15%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 0 0% 83%;
+    --badge-proposal-bg: #13392b;
+    --badge-proposal: #47d191;
+    --badge-followup-bg: #172c45;
+    --badge-followup: #559ef6;
+    --badge-inquiry-bg: #2a1c40;
+    --badge-inquiry: #a781e4;
+    --badge-invoice-bg: #392813;
+    --badge-invoice: #f5b13d;
+    --badge-personal-bg: #401c2e;
+    --badge-personal: #db70a6;
+    --badge-newsletter-bg: #272d35;
+    --badge-newsletter: #8a96a8;
+    --badge-notification-bg: #292c32;
+    --badge-notification: #89909f;
+    --badge-amount-bg: #173622;
+    --badge-amount: #47d17a;
+    --badge-deadline-bg: #392213;
+    --badge-deadline: #f08842;
+    --badge-overdue-bg: #391313;
+    --badge-overdue: #e05252;
+    --badge-urgent-bg: #392b13;
+    --badge-urgent: #e6ad4d;
+ 
+    --sidebar-background: #0a0a0a;
+    --sidebar-foreground: #fafafa;
+    --sidebar-primary: #fafafa;
+    --sidebar-primary-foreground: #0a0a0a;
+    --sidebar-accent: #262626;
+    --sidebar-accent-foreground: #fafafa;
+    --sidebar-border: #333333;
+    --sidebar-ring: #d4d4d4;
   }
 }
 
@@ -165,11 +165,11 @@
   }
 
   .email-item:hover {
-    background-color: hsl(var(--email-hover));
+    background-color: var(--email-hover);
   }
 
   .email-item.selected {
-    background-color: hsl(var(--email-selected));
+    background-color: var(--email-selected);
   }
 
   .kbd {
@@ -179,7 +179,7 @@
 
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: hsl(var(--border)) transparent;
+    scrollbar-color: var(--border) transparent;
   }
 
   .scrollbar-thin::-webkit-scrollbar {
@@ -191,7 +191,7 @@
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--border));
+    background-color: var(--border);
     border-radius: 3px;
   }
 }

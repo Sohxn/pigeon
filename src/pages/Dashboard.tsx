@@ -142,7 +142,7 @@ export default function Dashboard() {
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <h1 className="text-xl font-bold" style={{ fontFamily: "'Magnolia Script', cursive" }}>Feathermail</h1>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">{user?.email}</span>
+            <span className="text-sm text-muted-foreground rounded-2xl p-2 border-2 ">{user?.email}</span>
             <button
               onClick={signOut}
               className="text-sm text-muted-foreground hover:text-foreground"
@@ -189,7 +189,9 @@ export default function Dashboard() {
               {accounts.map((account) => (
                 <div
                   key={account.id}
-                  className="border border-border rounded-lg p-4 flex items-center justify-between hover:border-foreground/50 transition-colors"
+                  className={`border border-border rounded-2xl p-4 flex items-center justify-between hover:border-foreground/50 
+                    ${account.is_primary? 'bg-[linear-gradient(145deg,_#e6e6e6,_#ffffff)] shadow-[7px_7px_20px_#bebebe,-7px_-7px_20px_#ffffff]' : 
+                    'shadow-[8px_8px_28px_#b8b8b8,-8px_-8px_28px_#ffffff]'}`}
                 >
                   <div className="flex items-center gap-4">
                     {/* Provider Icon */}

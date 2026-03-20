@@ -24,11 +24,10 @@ export default function EmailListItem({ email, isSelected, onClick }: EmailListI
     <div
       onClick={onClick}
       className={`
+        mx-1 my-1
         rounded-2xl
-        ${isSelected? 'shadow-2xl' : 'shadow-md'}
-        p-4 border-white border-[3px] cursor-pointer hover:bg-secondary/50 transition-colors
-        ${isSelected ? 'bg-secondary' : ''}
-        ${!email.is_read ? 'bg-blue-50/50 dark:bg-blue-950/20' : ''}
+        ${isSelected? 'bg-[linear-gradient(145deg,_#e6e6e6,_#ffffff)] shadow-[7px_7px_20px_#bebebe,-7px_-7px_20px_#ffffff]' : 'shadow-md'}
+        p-4 cursor-pointer hover:bg-secondary/50 transition-colors
       `}
     >
       <div className="flex items-start justify-between mb-1">

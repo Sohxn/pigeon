@@ -133,7 +133,7 @@ export function ComposeModal({ isOpen, onClose, initData }: ComposeModalProps) {
           }}
           exit={{ opacity: 0, y: 50, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className="fixed bottom-4 right-4 w-[560px] bg-background border border-border rounded-lg shadow-2xl z-50 overflow-hidden"
+          className="fixed bottom-4 right-4 w-[560px] bg-background border border-border rounded-2xl shadow-2xl z-50 overflow-hidden"
           onKeyDown={handleKeyDown}
         >
           {/* ── Header ── */}
@@ -177,7 +177,7 @@ export function ComposeModal({ isOpen, onClose, initData }: ComposeModalProps) {
                     type="email"
                     value={to}
                     onChange={(e) => { setTo(e.target.value); setError(null); }}
-                    className="flex-1 bg-transparent text-sm focus:outline-none"
+                    className="flex-1 bg-transparent text-sm focus:outline-none ml-10"
                     placeholder="recipient@example.com"
                     disabled={sending}
                   />
@@ -190,7 +190,7 @@ export function ComposeModal({ isOpen, onClose, initData }: ComposeModalProps) {
                     type="text"
                     value={subject}
                     onChange={(e) => { setSubject(e.target.value); setError(null); }}
-                    className="flex-1 bg-transparent text-sm focus:outline-none"
+                    className="flex-1 bg-transparent text-sm focus:outline-none ml-10"
                     placeholder="Subject"
                     disabled={sending}
                   />
@@ -201,7 +201,7 @@ export function ComposeModal({ isOpen, onClose, initData }: ComposeModalProps) {
                   ref={bodyRef}
                   value={body}
                   onChange={(e) => { setBody(e.target.value); setError(null); }}
-                  className="w-full h-56 bg-transparent text-sm focus:outline-none resize-none"
+                  className="w-full h-56 bg-transparent text-sm focus:outline-none resize-none pt-4"
                   placeholder="Compose your message… (Ctrl+Enter to send)"
                   disabled={sending}
                 />

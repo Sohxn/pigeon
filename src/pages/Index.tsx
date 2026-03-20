@@ -175,7 +175,7 @@ export default function Index() {
 
       {/* Email List */}
       <div className="w-96 border-r border-border flex flex-col">
-        <div className="h-14 border-b border-border px-4 flex items-center justify-between">
+        <div className="h-14 px-4 flex items-center justify-between">
           <div>
             <h1 className="text-sm font-semibold">
               {activeFolder.charAt(0).toUpperCase() + activeFolder.slice(1)}

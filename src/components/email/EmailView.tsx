@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { useEmailStore } from "@/store/emailStore";
 import * as api from "@/services/apiClient";
-import { Star, Archive, Trash2, Reply } from "lucide-react";
+import { Star, Archive, Trash2, Reply , Sparkles} from "lucide-react";
 import { useEffect } from "react";
 import DOMPurify from 'dompurify';
 import { toast } from 'sonner';
@@ -111,7 +111,7 @@ export default function EmailView({ email, onReply }: EmailViewProps) {
   return (
     <div className="h-full flex flex-col bg-background">
       {/* Header */}
-      <div className="border-b border-border p-6 bg-background">
+      <div className="rounded-2xl shadow-xl mb-2 p-6 bg-background">
         <div className="flex items-start justify-between mb-4">
           <h1 className="text-2xl font-bold flex-1 text-foreground">
             {email.subject || "(No Subject)"}
@@ -176,8 +176,15 @@ export default function EmailView({ email, onReply }: EmailViewProps) {
         </div>
       </div>
 
+      
+      {/* AI Summary area */}
+      <div className="flex flex-col h-[10vh] rounded-2xl shadow-xl">
+            <span className="flex font-semibold justify-center my-auto">AI SUMMARY <Sparkles className="ml-2"></Sparkles></span>
+      </div>
+
+
       {/* Body */}
-      <div className="flex-1 overflow-y-auto p-6 bg-background">
+      <div className="flex-1 overflow-y-auto p-6 bg-transparent">
         {email.body_html ? (
           <div
             className="email-content"

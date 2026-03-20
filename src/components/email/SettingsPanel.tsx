@@ -47,7 +47,7 @@ export function SettingsPanel({ isOpen, onClose, currentWallpaper, onWallpaperCh
                     : "border-border hover:border-muted-foreground"
                 }`}
                 style={{
-                  background: wp.value || "hsl(var(--background))",
+                  background: wp.value || "var(--background)",
                 }}
                 title={wp.name}
               />

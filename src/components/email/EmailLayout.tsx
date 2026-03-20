@@ -194,7 +194,7 @@ export default function EmailLayout() {
   return (
     <div 
       className="h-screen flex"
-      style={{ background: wallpaper || "hsl(var(--background))" }}
+      style={{ background: wallpaper || "var(--background)" }}
     >
       <EmailSidebar
         activeFolder={activeFolder}

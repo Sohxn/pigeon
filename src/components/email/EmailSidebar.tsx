@@ -73,14 +73,14 @@ export default function EmailSidebar({
   const navigate = useNavigate();
 
   return (
-    <aside className="w-56 border-r border-border flex flex-col bg-background">
+    <aside className="w-56 flex flex-col bg-transparent">
       {/* Logo */}
-      <div className="h-14 flex items-center px-4 border-b border-border">
+      <div className="h-14 flex items-center justify-center border-b border-border rounded-2xl shadow-md">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-foreground rounded-md flex items-center justify-center">
+          {/* <div className="w-8 h-8 bg-foreground rounded-md flex items-center justify-center">
             <Command className="w-4 h-4 text-background" />
-          </div>
-          <span className="font-semibold tracking-tight" style={{ fontFamily: "'Magnolia Script', cursive" }}>Feathermail</span>
+          </div> */}
+          <span className="font-semibold tracking-tight text-xl" style={{ fontFamily: "'Magnolia Script', cursive" }}>Feathermail</span>
         </div>
       </div>
 
@@ -113,12 +113,12 @@ export default function EmailSidebar({
             className={cn(
               "w-full flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors mb-1",
               selectedAccountId === account.id
-                ? "bg-secondary text-foreground"
+                ? "bg-[#e6e6e6] text-foreground"
                 : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
             )}
           >
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-4 h-4 rounded-full bg-foreground/20 flex items-center justify-center flex-shrink-0">
+              <div className="w-4 h-4 rounded-full bg-[#ffffff] flex items-center justify-center flex-shrink-0">
                 <span className="text-[8px] font-bold">
                   {account.email_address[0].toUpperCase()}
                 </span>
