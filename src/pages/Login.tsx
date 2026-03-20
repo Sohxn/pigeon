@@ -29,8 +29,8 @@ export default function Login() {
       {/* Top Navigation Bar */}
       <header className="w-full border-b border-border">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/landing" className="text-xl font-bold">
-            Pigeon Mail
+          <Link to="/landing" className="text-xl font-bold" style={{ fontFamily: "'Magnolia Script', cursive" }}>
+            Feathermail
           </Link>
           
           {/* Top Right Buttons */}
