@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { useEmailStore } from "@/store/emailStore";
 import * as api from "@/services/apiClient";
-import { Star, Archive, Trash2, Reply , Sparkles} from "lucide-react";
+import { Star, Archive, Trash2, Reply, Sparkles } from "lucide-react";
 import { useEffect } from "react";
 import DOMPurify from 'dompurify';
 import { toast } from 'sonner';
@@ -20,35 +20,28 @@ interface EmailViewProps {
     is_read: boolean;
     is_starred: boolean;
   };
-  /** Called when user clicks Reply – passes pre-fill data to parent */
   onReply?: (data: ComposeInitData) => void;
 }
 
 export default function EmailView({ email, onReply }: EmailViewProps) {
-  const markAsRead  = useEmailStore(state => state.markEmailAsRead);
-  const toggleStar  = useEmailStore(state => state.toggleEmailStar);
+  const markAsRead   = useEmailStore(state => state.markEmailAsRead);
+  const toggleStar   = useEmailStore(state => state.toggleEmailStar);
   const archiveEmail = useEmailStore(state => state.archiveEmail);
 
-  // Mark as read when email is viewed
   useEffect(() => {
     if (!email.is_read) {
       markAsRead(email.id);
-      api.markEmailAsRead(email.id).catch(err =>
-        console.error('Failed to mark as read:', err)
-      );
+      api.markEmailAsRead(email.id).catch(err => console.error('Failed to mark as read:', err));
     }
   }, [email.id, email.is_read, markAsRead]);
-
-  // ── Actions ──────────────────────────────────────────────────────────────
 
   const handleToggleStar = async () => {
     try {
       toggleStar(email.id);
       await api.toggleEmailStar(email.id, email.is_starred);
-    } catch (error) {
-      console.error('Failed to toggle star:', error);
+    } catch {
       toast.error('Failed to update email');
-      toggleStar(email.id); // revert
+      toggleStar(email.id);
     }
   };
 
@@ -57,134 +50,81 @@ export default function EmailView({ email, onReply }: EmailViewProps) {
       archiveEmail(email.id);
       await api.archiveEmail(email.id);
       toast.success('Email archived');
-    } catch (error) {
-      console.error('Failed to archive:', error);
+    } catch {
       toast.error('Failed to archive email');
     }
   };
 
   const handleReply = () => {
     if (!onReply) return;
-
-    // Build a quoted body so context is preserved
     const dateStr = format(new Date(email.received_at), 'PPpp');
     const quotedHeader = `\n\n---\nOn ${dateStr}, ${email.from_name ?? email.from_email} <${email.from_email}> wrote:\n`;
-
-    // Use plain text if available; strip HTML tags as fallback
-    const originalBody = email.body_text
-      ? email.body_text
-      : email.body_html?.replace(/<[^>]+>/g, '') ?? '';
-
-    // Indent each line with "> "
-    const quoted = originalBody
-      .split('\n')
-      .map(line => `> ${line}`)
-      .join('\n');
-
-    const reSubject = email.subject.startsWith('Re:')
-      ? email.subject
-      : `Re: ${email.subject}`;
-
-    onReply({
-      to: email.from_email,
-      subject: reSubject,
-      body: quotedHeader + quoted,
-    });
+    const originalBody = email.body_text || email.body_html?.replace(/<[^>]+>/g, '') || '';
+    const quoted = originalBody.split('\n').map(l => `> ${l}`).join('\n');
+    const reSubject = email.subject.startsWith('Re:') ? email.subject : `Re: ${email.subject}`;
+    onReply({ to: email.from_email, subject: reSubject, body: quotedHeader + quoted });
   };
-
-  // ── HTML sanitisation ─────────────────────────────────────────────────────
 
   const getSanitizedHTML = (html: string) =>
     DOMPurify.sanitize(html, {
-      ALLOWED_TAGS: [
-        'p', 'br', 'strong', 'em', 'u', 'a', 'ul', 'ol', 'li',
-        'blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-        'div', 'span', 'img', 'table', 'tr', 'td', 'th', 'thead', 'tbody',
-      ],
-      ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class'],
-      FORBID_TAGS: ['style', 'script', 'iframe', 'object', 'embed'],
-      FORBID_ATTR: ['style', 'onclick', 'onload', 'onerror'],
+      ALLOWED_TAGS: ['p','br','strong','em','u','a','ul','ol','li','blockquote','h1','h2','h3','h4','h5','h6','div','span','img','table','tr','td','th','thead','tbody'],
+      ALLOWED_ATTR: ['href','src','alt','title','class'],
+      FORBID_TAGS: ['style','script','iframe','object','embed'],
+      FORBID_ATTR: ['style','onclick','onload','onerror'],
     });
 
-  // ── Render ────────────────────────────────────────────────────────────────
-
   return (
-    <div className="h-full flex flex-col bg-background">
-      {/* Header */}
-      <div className="rounded-2xl shadow-xl mb-2 p-6 bg-background">
-        <div className="flex items-start justify-between mb-4">
-          <h1 className="text-2xl font-bold flex-1 text-foreground">
+    <div className="flex flex-col bg-background p-2 md:p-4 gap-3">
+
+      {/* Header card */}
+      <div className="rounded-2xl shadow-xl p-4 md:p-6 bg-background">
+        <div className="flex items-start justify-between mb-4 gap-2">
+          <h1 className="text-lg md:text-2xl font-bold flex-1 text-foreground break-words">
             {email.subject || "(No Subject)"}
           </h1>
-
-          <div className="flex gap-1">
-            {/* Reply */}
+          <div className="flex gap-1 flex-shrink-0">
             {onReply && (
-              <button
-                onClick={handleReply}
-                className="p-2 hover:bg-secondary rounded-md transition-colors"
-                title="Reply"
-              >
+              <button onClick={handleReply} className="p-2 hover:bg-secondary rounded-md transition-colors" title="Reply">
                 <Reply className="w-4 h-4" />
               </button>
             )}
-
-            {/* Star */}
-            <button
-              onClick={handleToggleStar}
-              className="p-2 hover:bg-secondary rounded-md transition-colors"
-              title={email.is_starred ? "Unstar" : "Star"}
-            >
-              <Star
-                className={`w-4 h-4 ${email.is_starred ? 'fill-yellow-500 text-yellow-500' : ''}`}
-              />
+            <button onClick={handleToggleStar} className="p-2 hover:bg-secondary rounded-md transition-colors">
+              <Star className={`w-4 h-4 ${email.is_starred ? 'fill-yellow-500 text-yellow-500' : ''}`} />
             </button>
-
-            {/* Archive */}
-            <button
-              onClick={handleArchive}
-              className="p-2 hover:bg-secondary rounded-md transition-colors"
-              title="Archive"
-            >
+            <button onClick={handleArchive} className="p-2 hover:bg-secondary rounded-md transition-colors" title="Archive">
               <Archive className="w-4 h-4" />
             </button>
-
-            {/* Delete (placeholder – hook up trashEmail if needed) */}
-            <button
-              className="p-2 hover:bg-secondary rounded-md transition-colors"
-              title="Delete"
-            >
+            <button className="p-2 hover:bg-secondary rounded-md transition-colors" title="Delete">
               <Trash2 className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        <div className="space-y-2 text-sm text-foreground">
-          <div className="flex items-center gap-2">
+        <div className="space-y-1 text-sm text-foreground">
+          <div className="flex flex-wrap items-center gap-1">
             <span className="font-semibold">From:</span>
             <span>{email.from_name || email.from_email}</span>
-            <span className="text-muted-foreground">&lt;{email.from_email}&gt;</span>
+            <span className="text-muted-foreground break-all">&lt;{email.from_email}&gt;</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-1">
             <span className="font-semibold">To:</span>
-            <span>{email.to_email.join(', ')}</span>
+            <span className="break-all">{email.to_email.join(', ')}</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <span className="font-semibold">Date:</span>
             <span>{format(new Date(email.received_at), 'PPpp')}</span>
           </div>
         </div>
       </div>
 
-      
-      {/* AI Summary area */}
-      <div className="flex flex-col h-[10vh] rounded-2xl shadow-xl">
-            <span className="flex font-semibold justify-center my-auto">AI SUMMARY <Sparkles className="ml-2"></Sparkles></span>
+      {/* AI Summary */}
+      <div className="rounded-2xl shadow-xl p-4 flex items-center justify-center gap-2 min-h-[56px]">
+        <span className="font-semibold text-sm">AI SUMMARY</span>
+        <Sparkles className="w-4 h-4" />
       </div>
 
-
       {/* Body */}
-      <div className="flex-1 overflow-y-auto p-6 bg-transparent">
+      <div className="rounded-2xl shadow-xl p-4 md:p-6 bg-background overflow-x-auto">
         {email.body_html ? (
           <div
             className="email-content"
@@ -192,18 +132,15 @@ export default function EmailView({ email, onReply }: EmailViewProps) {
             style={{ fontFamily: 'inherit', fontSize: '14px', lineHeight: '1.6', color: 'inherit' }}
           />
         ) : (
-          <div
-            className="whitespace-pre-wrap text-sm leading-relaxed text-foreground"
-            style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', fontSize: '14px' }}
-          >
+          <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
             {email.body_text}
           </div>
         )}
       </div>
 
-      {/* Inline quick-reply hint */}
+      {/* Reply button */}
       {onReply && (
-        <div className="border-t border-border px-6 py-3">
+        <div className="pb-4">
           <button
             onClick={handleReply}
             className="flex items-center gap-2 px-4 py-2 text-sm border border-border rounded-md hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
