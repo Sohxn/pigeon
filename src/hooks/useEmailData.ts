@@ -21,7 +21,7 @@ export function useEmailData() {
   const loadData = async () => {
     // dev mode
     if(isDev){
-      store.setEmails(mockEmails as any);
+      store.setEmails(mockEmails);
       store.setAccounts(
         [
           {
