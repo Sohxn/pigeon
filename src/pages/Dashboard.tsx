@@ -16,13 +16,23 @@ import { toast } from "sonner";
 
 export default function Dashboard() {
   const navigate = useNavigate();
- const { user, signOut, isAuthenticated, loading: authLoading } = useAuth();
+  const { user, signOut, isAuthenticated, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+
+
+  // remove account panel
+  const [removePanelOpen, setRemovePanelOpen] = useState(false);
+
+  const handleRemoveAccountPanel = () => {
+    setRemovePanelOpen(true);
+  }
   
   // Get accounts from store
   const accounts = useEmailStore(state => state.accounts);
   const setAccounts = useEmailStore(state => state.setAccounts);
+
+ 
   
   // Load accounts on mount
  useEffect(() => {
@@ -232,12 +242,7 @@ export default function Dashboard() {
                         Set as primary
                       </button>
                     )}
-                    <button
-                      onClick={() => handleRemoveAccount(account.id)}
-                      className="text-sm text-red-600 hover:text-red-700 px-3 py-1"
-                    >
-                      Remove
-                    </button>
+                    
                   </div>
                 </div>
               ))}
@@ -252,22 +257,51 @@ export default function Dashboard() {
             </>
           )}
         </div>
+
+
+        {/* remove account center (should be closed by default) */}
+        {removePanelOpen && (
+        <div className="flex fixed top-0 right-0 z-50 h-screen lg:w-[30vw] sm:w-screen rounded-2xl
+        bg-[linear-gradient(1deg,_#222222,_#ffffff)] shadow-[inset_20px_20px_60px_#bebebe,inset_-20px_-20px_60px_#ffffff]
+        text-center p-10 grid"> 
+          <button className="rounded-xl" onClick={() => setRemovePanelOpen(false)}>close</button>
+          <span className="text-2xl font-bold">Remove Accounts</span>
+          <span className="text-md">Careful, you're removing accounts from Feathermail</span>
+          {/* accounts to remove */}
+          <>
+          {accounts.map((account) => (
+            <div className="">
+              <button onClick={() => handleRemoveAccount(account.id)} className="p-2 rounded-2xl border border-border text-center text-[#ffffff]">{account.email_address}</button>
+            </div>
+          ))}
+          </>
+        </div>
+        )}
+       
         
         {/* Action Buttons */}
         {accounts.length > 0 && (
           <div className="flex gap-3">
             <button
               onClick={handleGoToInbox}
-              className="px-6 py-3 bg-foreground text-background rounded-md hover:opacity-90 font-medium"
+              className="px-6 py-3 bg-foreground text-background rounded-xl hover:opacity-90 font-medium"
             >
               Go to Inbox →
             </button>
+
+
             <button
               onClick={handleSyncAll}
               disabled={syncing}
-              className="px-6 py-3 border border-border rounded-md hover:bg-secondary disabled:opacity-50"
+              className="px-6 py-3 border border-border rounded-xl hover:bg-secondary disabled:opacity-50"
             >
               {syncing ? 'Syncing...' : 'Sync All Accounts'}
+            </button>
+
+
+            <button className="px-6 py-3 border border-border rounded-xl text-[#ff0000] hover:text-foreground hover:bg-[#FFC2C2]"
+            onClick={handleRemoveAccountPanel}>
+              Remove Accounts
             </button>
           </div>
         )}
