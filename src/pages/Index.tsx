@@ -143,7 +143,7 @@ export default function Index() {
         ${mobilePanel === "list" ? "flex w-full" : "hidden"}
       `}>
         {/* Header */}
-        <div className="h-14 px-4 flex items-center justify-between flex-shrink-0">
+        <div className="h-14 px-4 flex items-center justify-between flex-shrink-0 glass-black rounded-xl m-1">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobilePanel("sidebar")}
@@ -152,7 +152,7 @@ export default function Index() {
               <Menu className="w-5 h-5" />
             </button>
             <div>
-              <h1 className="text-sm font-semibold">
+              <h1 className="text-sm font-semibold text-[#ffffff]">
                 {activeFolder.charAt(0).toUpperCase() + activeFolder.slice(1)}
               </h1>
               <p className="text-xs text-muted-foreground">{selectedAccountName}</p>
@@ -161,14 +161,14 @@ export default function Index() {
           <button
             onClick={sync}
             disabled={isSyncing}
-            className="p-2 hover:bg-secondary rounded-md transition-colors disabled:opacity-50"
+            className="p-2 hover:bg-secondary rounded-full transition-colors glass rounded-full disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 ${isSyncing ? "animate-spin" : ""}`} />
           </button>
         </div>
 
         {/* Email items — relative so FAB can be positioned inside */}
-        <div className="flex-1 overflow-y-auto relative">
+        <div className="flex-1 overflow-y-scroll scrollbar-hide">
           {emails.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
               <p className="mb-4">No emails</p>
@@ -213,7 +213,7 @@ export default function Index() {
         ${mobilePanel === "email" ? "flex w-full" : "hidden"}
       `}>
         {/* Mobile back button */}
-        <div className="md:hidden h-12 px-4 flex items-center border-b border-border bg-background flex-shrink-0">
+        <div className="md:hidden h-12 px-4 flex items-center border-b border-border glass m-2 flex-shrink-0">
           <button
             onClick={() => setMobilePanel("list")}
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"

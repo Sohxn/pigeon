@@ -69,7 +69,7 @@ export function EmailList({
       </div>
 
       {/* Email List */}
-      <div className="flex-1 overflow-y-auto scrollbar-thin">
+      <div className="flex-1 overflow-y-auto">
         {sortedEmails.length === 0 ? (
           <div className="p-8 text-center text-muted-foreground text-sm">
             No emails found

@@ -49,9 +49,9 @@ export default function EmailSidebar({
     <aside className="w-full md:w-56 flex flex-col bg-transparent h-full">
 
       {/* Logo row */}
-      <div className="h-14 bg-background rounded-2xl m-2 flex items-center justify-between px-4 border-b border-border flex-shrink-0">
+      <div className="h-14 rounded-2xl m-2 flex items-center justify-between px-4 flex-shrink-0">
         <span
-          className="font-semibold tracking-tight text-xl"
+          className="font-semibold tracking-tight text-[5vh] text-white"
           style={{ fontFamily: "'Magnolia Script', cursive" }}
         >
           Feathermail
