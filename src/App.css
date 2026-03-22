@@ -19,12 +19,8 @@
 }
 
 @keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -41,54 +37,9 @@
   color: #888;
 }
 
-
-/* fixed text and image issues */
-.email-content {
-  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-  font-size: 14px;
-  line-height: 1.6;
-  color: inherit;
-}
-
-/* .email-content * {
-  font-family: inherit !important;
-  max-width: 100% !important;
-} */
-
-.email-content p {
-  margin-bottom: 1em;
-}
-
-.email-content a {
-  color: #1b73ff;
-  text-decoration: underline;
-}
-
-.email-content img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
-.email-content table {
-  border-collapse: collapse;
-  width: 100%;
-  margin: 1em 0;
-}
-
-.email-content td,
-.email-content th {
-  border: 1px solid #e5e7eb;
-  padding: 8px;
-}
-
-.email-content strong,
-.email-content b {
-  font-weight: 600;
-}
-
-.email-content em,
-.email-content i {
-  font-style: italic;
-}
-
+/*
+  .email-content is intentionally removed.
+  HTML emails are now rendered inside a sandboxed <iframe> in EmailView.tsx.
+  The iframe has its own minimal reset injected at writetime so the emails
+  own inline styles, fonts, tables, and images are never overridden by my css
+*/
