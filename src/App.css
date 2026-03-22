@@ -43,30 +43,30 @@
 
 
 .email-content {
-  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif !important;
-  font-size: 14px !important;
-  line-height: 1.6 !important;
-  color: inherit !important;
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: inherit;
 }
 
-.email-content * {
+/* .email-content * {
   font-family: inherit !important;
   max-width: 100% !important;
-}
+} */
 
 .email-content p {
   margin-bottom: 1em;
-  font-size: 14px !important;
 }
 
 .email-content a {
-  color: #3b82f6;
+  color: #1b73ff;
   text-decoration: underline;
 }
 
 .email-content img {
-  max-width: none;
+  max-width: 100%;
   height: auto;
+  display: block;
 }
 
 .email-content table {

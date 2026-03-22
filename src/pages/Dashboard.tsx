@@ -259,23 +259,58 @@ export default function Dashboard() {
         </div>
 
 
-        {/* remove account center (should be closed by default) */}
+        {/* remove account panel */}
         {removePanelOpen && (
-        <div className="flex fixed top-0 right-0 z-50 h-screen lg:w-[30vw] sm:w-screen rounded-2xl
-        bg-[linear-gradient(1deg,_#222222,_#ffffff)] shadow-[inset_20px_20px_60px_#bebebe,inset_-20px_-20px_60px_#ffffff]
-        text-center p-10 grid"> 
-          <button className="rounded-xl" onClick={() => setRemovePanelOpen(false)}>close</button>
-          <span className="text-2xl font-bold">Remove Accounts</span>
-          <span className="text-md">Careful, you're removing accounts from Feathermail</span>
-          {/* accounts to remove */}
           <>
-          {accounts.map((account) => (
-            <div className="">
-              <button onClick={() => handleRemoveAccount(account.id)} className="p-2 rounded-2xl border border-border text-center text-[#ffffff]">{account.email_address}</button>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
+              onClick={() => setRemovePanelOpen(false)}
+            />
+            {/* Slide-in panel */}
+            <div className="fixed top-0 right-0 z-50 h-screen w-full max-w-sm bg-background border-l border-border rounded-l-3xl shadow-2xl flex flex-col">
+              {/* Header */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border flex-shrink-0">
+                <div>
+                  <h2 className="text-lg font-semibold">Remove Accounts</h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">Click an account to remove it</p>
+                </div>
+                <button
+                  onClick={() => setRemovePanelOpen(false)}
+                  className="p-1.5 rounded-md hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Warning */}
+              <div className="mx-6 mt-4 px-4 py-3 bg-red-50 border border-red-200 rounded-xl flex-shrink-0">
+                <p className="text-sm text-red-700 font-medium">⚠ This action is irreversible</p>
+                <p className="text-xs text-red-500 mt-0.5">All synced emails for that account will be deleted.</p>
+              </div>
+
+              {/* Account list */}
+              <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3">
+                {accounts.map((account) => (
+                  <button
+                    key={account.id}
+                    onClick={() => handleRemoveAccount(account.id)}
+                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-border hover:border-red-300 hover:bg-red-50 transition-colors group text-left"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center flex-shrink-0">
+                        <span className="text-xs font-bold">{account.email_address[0].toUpperCase()}</span>
+                      </div>
+                      <span className="text-sm truncate">{account.email_address}</span>
+                    </div>
+                    <span className="text-xs text-red-500 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 ml-2">Remove</span>
+                  </button>
+                ))}
+              </div>
             </div>
-          ))}
           </>
-        </div>
         )}
        
         
