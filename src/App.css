@@ -167,6 +167,13 @@
     @apply text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+
+  .font-outline {
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: black; /* or any color */
+    -webkit-text-fill-color: transparent; /* Makes the inside transparent */
+  }
 }
 
 @layer utilities {
