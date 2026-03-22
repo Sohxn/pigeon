@@ -267,6 +267,7 @@ export default function Dashboard() {
               className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
               onClick={() => setRemovePanelOpen(false)}
             />
+            
             {/* Slide-in panel */}
             <div className="fixed top-0 right-0 z-50 h-screen w-full max-w-sm bg-background border-l border-border rounded-l-3xl shadow-2xl flex flex-col">
               {/* Header */}

@@ -43,3 +43,25 @@
   The iframe has its own minimal reset injected at writetime so the emails
   own inline styles, fonts, tables, and images are never overridden by my css
 */
+
+/* design system for potentially liquid glass components */
+.glass {
+  --glass-bg: color-mix(in oklab, rgba(255, 255, 255, 0.15) 80%, transparent);
+  --glass-border: color-mix(in oklab, var(--glass-bg) 70%, white);
+  border: var(--glass-border);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* shadow-2xl/20 (approximation) */
+  color: rgba(255, 255, 255, 0.7); /* text-white/70 */
+  width: fit-content; /* w-fit */
+  cursor: pointer; /* cursor-pointer */
+  backdrop-filter: blur(8px); /* backdrop-blur-sm */
+  background: var(--glass-bg); /* bg-(--glass-bg) */ 
+  transition: transform 0.3s ease; /* transition duration-300 */
+  
+  /* inset shadows */
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2),
+              0 0 20px rgba(0, 0, 0, 0.2);
+  }
+
+.glass:hover {
+  transform: scale(1.10); /* [&:hover]:scale-110 */
+}

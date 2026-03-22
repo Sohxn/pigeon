@@ -1,5 +1,6 @@
 import { formatDistanceToNow } from "date-fns";
 
+
 interface EmailListItemProps {
   email: {
     id: string;
@@ -19,17 +20,19 @@ interface EmailListItemProps {
   onClick: () => void;
 }
 
+// ${isSelected? 'bg-[linear-gradient(145deg,_#e6e6e6,_#ffffff)] shadow-[7px_7px_20px_#bebebe,-7px_-7px_20px_#ffffff]' : 'shadow-md'}
+
 export default function EmailListItem({ email, isSelected, onClick }: EmailListItemProps) {
   return (
     <div
       onClick={onClick}
       className={`
+        glass
         mx-1 my-1
         rounded-2xl
-        ${isSelected? 'bg-[linear-gradient(145deg,_#e6e6e6,_#ffffff)] shadow-[7px_7px_20px_#bebebe,-7px_-7px_20px_#ffffff]' : 'shadow-md'}
-        p-4 cursor-pointer hover:bg-secondary/50 transition-colors
-      `}
-    >
+        p-4 cursor-pointer
+      `}>
+        
       <div className="flex items-start justify-between mb-1">
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <span className={`font-medium truncate ${!email.is_read ? 'font-bold' : ''}`}>
