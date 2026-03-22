@@ -49,7 +49,7 @@ export default function EmailSidebar({
     <aside className="w-full md:w-56 flex flex-col bg-transparent h-full">
 
       {/* Logo row */}
-      <div className="h-14 flex items-center justify-between px-4 border-b border-border flex-shrink-0">
+      <div className="h-14 bg-background rounded-2xl m-2 flex items-center justify-between px-4 border-b border-border flex-shrink-0">
         <span
           className="font-semibold tracking-tight text-xl"
           style={{ fontFamily: "'Magnolia Script', cursive" }}
@@ -65,13 +65,13 @@ export default function EmailSidebar({
       </div>
 
       {/* Account Selector */}
-      <div className="border-b border-border p-3 flex-shrink-0">
+      <div className="p-3 flex-shrink-0">
         <div className="text-xs font-medium text-muted-foreground mb-2 px-1">ACCOUNTS</div>
 
         <button
           onClick={() => onAccountChange(null)}
           className={cn(
-            "w-full flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors mb-1",
+            "w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-colors mb-1 glass",
             selectedAccountId === null
               ? "bg-secondary text-foreground"
               : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
@@ -92,11 +92,11 @@ export default function EmailSidebar({
               "w-full flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors mb-1",
               selectedAccountId === account.id
                 ? "bg-secondary text-foreground"
-                : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+                : "text-muted-foreground"
             )}
           >
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-4 h-4 rounded-full bg-foreground/20 flex items-center justify-center flex-shrink-0">
+              <div className="w-4 h-4 rounded-full glass flex items-center justify-center flex-shrink-0 p-2">
                 <span className="text-[8px] font-bold">{account.email_address[0].toUpperCase()}</span>
               </div>
               <span className="truncate text-xs">{account.email_address}</span>
@@ -110,7 +110,7 @@ export default function EmailSidebar({
       <div className="p-3 flex-shrink-0">
         <button
           onClick={onCompose}
-          className="w-full flex items-center gap-2 px-3 py-2 bg-foreground text-background rounded-md text-sm font-medium hover:bg-foreground/90 transition-colors"
+          className="w-full flex items-center gap-2 px-3 py-2 text-background rounded-xl text-sm font-medium hover:bg-foreground/90 transition-colors glass"
         >
           <PenSquare className="w-4 h-4" />
           Compose
@@ -128,10 +128,10 @@ export default function EmailSidebar({
               key={folder.id}
               onClick={() => onFolderChange(folder.id)}
               className={cn(
-                "w-full flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors",
+                "w-full flex items-center justify-between px-3 py-2 text-sm transition-colors",
                 isActive
-                  ? "bg-secondary text-foreground"
-                  : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+                  ? "glass rounded-xl text-foreground"
+                  : "text-muted-foreground"
               )}
             >
               <div className="flex items-center gap-2">

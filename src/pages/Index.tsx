@@ -115,7 +115,7 @@ export default function Index() {
     : "All Accounts";
 
   return (
-    <div className="h-screen flex bg-background overflow-hidden">
+    <div className="h-screen flex overflow-hidden">
 
       {/* ── SIDEBAR ── */}
       <div className={`

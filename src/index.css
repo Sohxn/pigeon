@@ -11,6 +11,10 @@
   :root {
     --background: #ffffff;
     --foreground: #0a0a0a;
+
+    /* mail */
+    --mailbody: #2e2e2e;
+    --mailbody-title: #ffffff;
  
     --card: #ffffff;
     --card-foreground: #0a0a0a;
@@ -25,7 +29,7 @@
     --secondary-foreground: #0a0a0a;
  
     --muted: #f5f5f5;
-    --muted-foreground: #737373;
+    --muted-foreground: #fcfcfc;
  
     --accent: #f5f5f5;
     --accent-foreground: #0a0a0a;
@@ -41,11 +45,9 @@
 
     --red: #ff0000;
  
-    /* Custom tokens */
     --email-hover: #fafafa;
     --email-selected: #f2f2f2;
  
-    /* iOS-style badge colors */
     --badge-proposal-bg: #e8fdf3;
     --badge-proposal: #1d8660;
     --badge-followup-bg: #e6f1ff;
@@ -111,7 +113,6 @@
     --email-hover: #141414;
     --email-selected: #1f1f1f;
  
-    /* iOS-style badge colors - dark mode */
     --badge-proposal-bg: #13392b;
     --badge-proposal: #47d191;
     --badge-followup-bg: #172c45;
@@ -153,10 +154,17 @@
 
   html {
     font-family: "Roboto Mono", monospace;
-  }
+    background-image: url('../public/wallpaper/black-liquid.png');
+    background-repeat: no-repeat;
+    background-position: center center; /* Centers the image */
+    background-size: cover; /* Ensures the image covers the entire viewport */
+    background-attachment: fixed; /* Keeps the image fixed during scroll for a parallax effect (optional) */
+    /* Ensure the html element covers the full viewport height */
+    min-height: 100vh;
+    }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
@@ -181,7 +189,7 @@
 
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
+    scrollbar-color: transparent;
   }
 
   .scrollbar-thin::-webkit-scrollbar {
@@ -193,8 +201,74 @@
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: var(--border);
     border-radius: 3px;
+  }
+
+  /* ── Liquid glass ─────────────────────────────────────────────────────
+     Shows frosted blur over wallpaper gradients. Falls back to a subtle
+     translucent panel on the plain white default — same behaviour as
+     iOS springboard widgets.
+  ──────────────────────────────────────────────────────────────────────── */
+  .glass {
+    background: rgba(255, 255, 255, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    box-shadow:
+      inset 0 1px 0   rgba(255, 255, 255, 0.75),
+      inset 0 -1px 0  rgba(255, 255, 255, 0.10),
+      0 2px 8px       rgba(0, 0, 0, 0.08),
+      0 1px 2px       rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(14px) saturate(1.5);
+    -webkit-backdrop-filter: blur(14px) saturate(1.5);
+    color: inherit;
+    transition:
+      background   150ms ease,
+      box-shadow   150ms ease,
+      border-color 150ms ease,
+      transform    100ms ease;
+  }
+
+  .glass:hover {
+    background: rgba(255, 255, 255, 0.62);
+    border-color: rgba(255, 255, 255, 0.80);
+    box-shadow:
+      inset 0 1px 0   rgba(255, 255, 255, 0.90),
+      inset 0 -1px 0  rgba(255, 255, 255, 0.15),
+      0 4px 16px      rgba(0, 0, 0, 0.10),
+      0 1px 3px       rgba(0, 0, 0, 0.07);
+  }
+
+  /* .glass:active {
+    transform: scale(0.985);
+  } */
+
+  .glass.selected {
+    background: rgba(255, 255, 255, 0.78);
+    border-color: rgba(255, 255, 255, 0.95);
+    box-shadow:
+      inset 0 1px 0   rgba(255, 255, 255, 0.95),
+      inset 0 -1px 0  rgba(255, 255, 255, 0.25),
+      0 6px 20px      rgba(0, 0, 0, 0.12),
+      0 1px 4px       rgba(0, 0, 0, 0.08);
+  }
+
+  .dark .glass {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.10);
+    box-shadow:
+      inset 0 1px 0   rgba(255, 255, 255, 0.08),
+      inset 0 -1px 0  rgba(0, 0, 0, 0.30),
+      0 2px 8px       rgba(0, 0, 0, 0.40),
+      0 1px 2px       rgba(0, 0, 0, 0.30);
+  }
+
+  .dark .glass:hover {
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255, 255, 255, 0.16);
+  }
+
+  .dark .glass.selected {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.22);
   }
 }
 

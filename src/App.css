@@ -39,29 +39,85 @@
 
 /*
   .email-content is intentionally removed.
-  HTML emails are now rendered inside a sandboxed <iframe> in EmailView.tsx.
-  The iframe has its own minimal reset injected at writetime so the emails
-  own inline styles, fonts, tables, and images are never overridden by my css
+  HTML emails are rendered inside a sandboxed <iframe> in EmailView.tsx.
 */
 
-/* design system for potentially liquid glass components */
+/* ── Liquid glass ─────────────────────────────────────────────────────
+   backdrop-filter blur only shows the effect when the element sits
+   on top of something colourful — i.e. one of the wallpaper gradients.
+   On the plain white default it reads as a subtle frosted panel, which
+   is the correct graceful fallback (same as iOS spring-board widgets).
+──────────────────────────────────────────────────────────────────────── */
 .glass {
-  --glass-bg: color-mix(in oklab, rgba(255, 255, 255, 0.15) 80%, transparent);
-  --glass-border: color-mix(in oklab, var(--glass-bg) 70%, white);
-  border: var(--glass-border);
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* shadow-2xl/20 (approximation) */
-  color: rgba(255, 255, 255, 0.7); /* text-white/70 */
-  width: fit-content; /* w-fit */
-  cursor: pointer; /* cursor-pointer */
-  backdrop-filter: blur(8px); /* backdrop-blur-sm */
-  background: var(--glass-bg); /* bg-(--glass-bg) */ 
-  transition: transform 0.3s ease; /* transition duration-300 */
-  
-  /* inset shadows */
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2),
-              0 0 20px rgba(0, 0, 0, 0.2);
-  }
+  /* translucent white fill */
+  background: rgba(255, 255, 255, 0.45);
+
+  /* proper border shorthand: width style color */
+  border: 1px solid rgba(255, 255, 255, 0.65);
+
+  /* single box-shadow declaration — top rim highlight + ambient drop */
+  box-shadow:
+    inset 0 1px 0   rgba(255, 255, 255, 0.75),   /* top-edge glass rim  */
+    inset 0 -1px 0  rgba(255, 255, 255, 0.10),   /* bottom-edge rim     */
+    0 2px 8px       rgba(0, 0, 0, 0.08),          /* ambient shadow      */
+    0 1px 2px       rgba(0, 0, 0, 0.05);          /* tight contact shadow*/
+
+  /* the frosted blur — visible over wallpapers */
+  backdrop-filter: blur(14px) saturate(1.5);
+  -webkit-backdrop-filter: blur(14px) saturate(1.5);
+
+  /* inherit text colour from the app theme — works on both light & dark */
+  color: inherit;
+
+  transition:
+    background  150ms ease,
+    box-shadow  150ms ease,
+    border-color 150ms ease,
+    transform   100ms ease;
+}
 
 .glass:hover {
-  transform: scale(1.10); /* [&:hover]:scale-110 */
+  background: rgba(255, 255, 255, 0.62);
+  border-color: rgba(255, 255, 255, 0.80);
+  box-shadow:
+    inset 0 1px 0   rgba(255, 255, 255, 0.90),
+    inset 0 -1px 0  rgba(255, 255, 255, 0.15),
+    0 4px 16px      rgba(0, 0, 0, 0.10),
+    0 1px 3px       rgba(0, 0, 0, 0.07);
+}
+
+.glass:active {
+  transform: scale(0.985);
+}
+
+/* Selected state — more opaque so the active item pops */
+.glass.selected {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(255, 255, 255, 0.95);
+  box-shadow:
+    inset 0 1px 0   rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0  rgba(255, 255, 255, 0.25),
+    0 6px 20px      rgba(0, 0, 0, 0.12),
+    0 1px 4px       rgba(0, 0, 0, 0.08);
+}
+
+/* ── Dark mode ── glass tints dark instead of white */
+.dark .glass {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.10);
+  box-shadow:
+    inset 0 1px 0   rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0  rgba(0, 0, 0, 0.30),
+    0 2px 8px       rgba(0, 0, 0, 0.40),
+    0 1px 2px       rgba(0, 0, 0, 0.30);
+}
+
+.dark .glass:hover {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.dark .glass.selected {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.22);
 }

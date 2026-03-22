@@ -277,10 +277,10 @@ export default function EmailView({ email, onReply }: EmailViewProps) {
   };
 
   return (
-    <div className="flex flex-col bg-background p-2 md:p-4 gap-3">
+    <div className="flex flex-col p-2 md:p-4 gap-3">
 
       {/* ── Header card ── */}
-      <div className="rounded-2xl shadow-xl p-4 md:p-6 bg-background">
+      <div className="rounded-2xl shadow-xl p-4 md:p-6 glass">
         <div className="flex items-start justify-between mb-4 gap-2">
           <h1 className="text-lg md:text-2xl font-bold flex-1 text-foreground break-words">
             {email.subject || "(No Subject)"}
@@ -341,13 +341,13 @@ export default function EmailView({ email, onReply }: EmailViewProps) {
       </div>
 
       {/* ── AI Summary placeholder ── */}
-      <div className="rounded-2xl shadow-xl p-4 flex items-center justify-center gap-2 min-h-[56px]">
+      <div className="rounded-2xl shadow-xl p-4 flex items-center justify-center gap-2 min-h-[56px] glass">
         <span className="font-semibold text-sm">AI SUMMARY</span>
         <Sparkles className="w-4 h-4" />
       </div>
 
       {/* ── Email body ── */}
-      <div className="rounded-2xl shadow-xl p-4 md:p-6 bg-background overflow-x-hidden">
+      <div className="rounded-2xl shadow-xl p-4 md:p-6 overflow-x-hidden glass">
         {email.body_html ? (
           <IframeEmailBody html={email.body_html} />
         ) : (
@@ -360,7 +360,7 @@ export default function EmailView({ email, onReply }: EmailViewProps) {
         <div className="pb-4">
           <button
             onClick={handleReply}
-            className="flex items-center gap-2 px-4 py-2 text-sm border border-border rounded-md hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+            className="flex items-center gap-2 px-4 py-2 text-sm border border-border rounded-xl hover:glass transition-colors text-muted-foreground hover:text-foreground"
           >
             <Reply className="w-4 h-4" />
             Reply to {email.from_name ?? email.from_email}

@@ -1,6 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
 
-
 interface EmailListItemProps {
   email: {
     id: string;
@@ -20,43 +19,40 @@ interface EmailListItemProps {
   onClick: () => void;
 }
 
-// ${isSelected? 'bg-[linear-gradient(145deg,_#e6e6e6,_#ffffff)] shadow-[7px_7px_20px_#bebebe,-7px_-7px_20px_#ffffff]' : 'shadow-md'}
-
 export default function EmailListItem({ email, isSelected, onClick }: EmailListItemProps) {
   return (
     <div
       onClick={onClick}
-      className={`
-        glass
-        mx-1 my-1
-        rounded-2xl
-        p-4 cursor-pointer
-      `}>
-        
+      // "glass" is the base class from App.css
+      // "selected" is the modifier — must be a plain class name, not a Tailwind utility
+      className={`glass${isSelected ? " selected" : ""} mx-1 my-1 rounded-2xl p-4 cursor-pointer`}
+    >
       <div className="flex items-start justify-between mb-1">
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <span className={`font-medium truncate ${!email.is_read ? 'font-bold' : ''}`}>
+          <span className={`truncate ${!email.is_read ? "font-bold" : "font-medium"}`}>
             {email.from_name || email.from_email}
           </span>
-          {email.is_starred && <span className="text-yellow-500">★</span>}
+          {email.is_starred && (
+            <span className="text-yellow-500 flex-shrink-0 text-xs">★</span>
+          )}
         </div>
-        <span className="text-xs text-muted-foreground whitespace-nowrap ml-2">
+        <span className="text-xs text-muted-foreground whitespace-nowrap ml-2 flex-shrink-0">
           {formatDistanceToNow(new Date(email.received_at), { addSuffix: true })}
         </span>
       </div>
 
-      <div className={`text-sm mb-1 truncate ${!email.is_read ? 'font-semibold' : ''}`}>
+      <div className={`text-sm mb-1 truncate ${!email.is_read ? "font-semibold" : ""}`}>
         {email.subject || "(No Subject)"}
       </div>
 
-      <div className="text-xs text-muted-foreground truncate">
+      <div className="text-xs text-mailbody truncate">
         {email.snippet || "No preview available"}
       </div>
 
-      {/* Show which account this email is from */}
       {email.email_accounts && (
         <div className="mt-2">
-          <span className="text-xs bg-secondary px-2 py-0.5 rounded">
+          {/* semi-transparent pill so it blends with the glass surface */}
+          <span className="text-xs bg-black/10 dark:bg-white/10 px-2 py-0.5 rounded-full">
             {email.email_accounts.email_address}
           </span>
         </div>
