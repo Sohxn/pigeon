@@ -143,7 +143,7 @@ export default function Index() {
         ${mobilePanel === "list" ? "flex w-full" : "hidden"}
       `}>
         {/* Header */}
-        <div className="h-14 px-4 flex items-center justify-between flex-shrink-0 glass-black rounded-xl m-1">
+        <div className="h-14 px-4 flex items-center justify-between flex-shrink-0 glass rounded-xl m-1">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobilePanel("sidebar")}

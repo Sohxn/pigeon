@@ -280,7 +280,7 @@ export default function EmailView({ email, onReply }: EmailViewProps) {
     <div className="flex flex-col p-2 md:p-4 gap-3">
 
       {/* ── Header card ── */}
-      <div className="rounded-2xl shadow-xl p-4 md:p-6 glass">
+      <div className="rounded-2xl p-4 md:p-6 glass">
         <div className="flex items-start justify-between mb-4 gap-2">
           <h1 className="text-lg md:text-2xl font-bold flex-1 text-foreground break-words">
             {email.subject || "(No Subject)"}
