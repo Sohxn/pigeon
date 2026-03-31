@@ -92,7 +92,7 @@
     --lg-blur:        blur(18px);
     --lg-saturate:    saturate(150%);
     --lg-brightness:  brightness(1.18);
-    --lg-distort:     url(#lg-distort);
+    /* --lg-distort: url(#lg-distort); — removed, too slow in practice */
 
     --lg-bg:          rgba(255, 255, 255, 0.06);
     --lg-bg-hover:    rgba(255, 255, 255, 0.10);
@@ -334,12 +334,10 @@
 
     /* Layer 1: base frosted surface across the whole element */
     backdrop-filter:
-      var(--lg-distort)
       var(--lg-blur)
       var(--lg-saturate)
       var(--lg-brightness);
     -webkit-backdrop-filter:
-      var(--lg-distort)
       var(--lg-blur)
       var(--lg-saturate)
       var(--lg-brightness);
@@ -350,11 +348,12 @@
     transition: var(--lg-transition);
   }
 
-  /* Layer 2: edge-only strong refraction
-     The mask-image makes this layer visible only near the perimeter.
-     Center is fully transparent → no distortion in the middle.
-     Edge is fully opaque → full distortion at the rim.
-     Result: the "water droplet bending light at its edge" look.        */
+  /* Layer 2: edge rim highlight — pure gradient, zero backdrop-filter.
+     A second backdrop-filter on ::before blurs content above it and
+     tanks performance (two GPU filter passes per element).
+     Instead: a masked radial gradient that brightens only the rim,
+     simulating the light-catch of a convex glass or water droplet.
+     GPU cost: essentially zero.                                         */
   .glass::before {
     content: '';
     position: absolute;
@@ -363,21 +362,11 @@
     z-index: 1;
     pointer-events: none;
 
-    backdrop-filter: url(#lg-distort-edge) blur(4px) brightness(1.12);
-    -webkit-backdrop-filter: url(#lg-distort-edge) blur(4px) brightness(1.12);
-
-    /* Mask: transparent center, opaque edges — ~18px edge band */
-    -webkit-mask-image: radial-gradient(
-      ellipse calc(100% - 22px) calc(100% - 22px) at 50% 50%,
-      transparent 70%,
-      rgba(0,0,0,0.6) 85%,
-      black 100%
-    );
-    mask-image: radial-gradient(
-      ellipse calc(100% - 22px) calc(100% - 22px) at 50% 50%,
-      transparent 70%,
-      rgba(0,0,0,0.6) 85%,
-      black 100%
+    background: radial-gradient(
+      ellipse calc(100% - 2px) calc(100% - 2px) at 50% 50%,
+      transparent 72%,
+      rgba(255,255,255,0.14) 86%,
+      rgba(255,255,255,0.26) 100%
     );
   }
 
@@ -410,6 +399,21 @@
     border-radius: var(--lg-radius, 16px) !important;
   }
 
+  /* CRITICAL: push all direct children above the ::before and ::after layers
+     so they are never blurred or obscured by the pseudo-elements           */
+  .glass > * {
+    position: relative;
+    z-index: 3;
+  }
+
+  /* Performance: promote to own GPU compositing layer, limit repaint scope */
+  .glass,
+  .glass-black {
+    will-change: transform;
+    transform: translateZ(0);
+    contain: layout style;
+  }
+
   .glass:hover {
     background:  var(--lg-bg-hover);
     box-shadow:  var(--lg-inset-hover), var(--lg-shadow-md);
@@ -431,12 +435,10 @@
     border-radius: var(--lg-radius, 16px);
 
     backdrop-filter:
-      var(--lg-distort)
       var(--lg-blur)
       var(--lg-saturate)
       var(--lg-brightness);
     -webkit-backdrop-filter:
-      var(--lg-distort)
       var(--lg-blur)
       var(--lg-saturate)
       var(--lg-brightness);
@@ -458,19 +460,12 @@
     border-radius: inherit;
     z-index: 1;
     pointer-events: none;
-    backdrop-filter: url(#lg-distort-edge) blur(4px) brightness(1.08);
-    -webkit-backdrop-filter: url(#lg-distort-edge) blur(4px) brightness(1.08);
-    -webkit-mask-image: radial-gradient(
-      ellipse calc(100% - 22px) calc(100% - 22px) at 50% 50%,
-      transparent 70%,
-      rgba(0,0,0,0.6) 85%,
-      black 100%
-    );
-    mask-image: radial-gradient(
-      ellipse calc(100% - 22px) calc(100% - 22px) at 50% 50%,
-      transparent 70%,
-      rgba(0,0,0,0.6) 85%,
-      black 100%
+
+    background: radial-gradient(
+      ellipse calc(100% - 2px) calc(100% - 2px) at 50% 50%,
+      transparent 72%,
+      rgba(255,255,255,0.10) 86%,
+      rgba(255,255,255,0.18) 100%
     );
   }
 
