@@ -121,7 +121,7 @@ export default function Index() {
       <div className={`
         flex-shrink-0 h-full overflow-y-auto
         md:block md:w-56
-        ${mobilePanel === "sidebar" ? "block w-full absolute inset-0 z-20 bg-background" : "hidden"}
+        ${mobilePanel === "sidebar" ? "block w-full absolute inset-0 z-20 bg-transparent" : "hidden"}
       `}>
         <EmailSidebar
           activeFolder={activeFolder}

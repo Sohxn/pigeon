@@ -159,7 +159,7 @@ export function ComposeModal({ isOpen, onClose, initData }: ComposeModalProps) {
             }}
             exit={{ opacity: 0, y: 50, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="hidden md:flex md:flex-col fixed bottom-4 right-4 w-[560px] h-[520px] bg-background border border-border rounded-2xl shadow-2xl z-50 overflow-hidden"
+            className="hidden md:flex md:flex-col fixed bottom-4 right-4 w-[560px] h-[520px] bg-background backdrop-blur-xl border border-border rounded-2xl shadow-2xl z-50 overflow-hidden"
             onKeyDown={handleKeyDown}
           >
             {/* Header */}

@@ -11,6 +11,10 @@
   :root {
     --background: #ffffff;
     --foreground: #ffffff;
+    
+    --foreground-black: #000000;
+
+    --composebg: #ffffff91;
 
     /* mail */
     --mailbody: #ffffff;

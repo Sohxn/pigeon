@@ -146,7 +146,7 @@ export default function Dashboard() {
   }
   
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-transparent">
       {/* Header */}
       <header className="border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -176,7 +176,7 @@ export default function Dashboard() {
         <div className="space-y-4 mb-8">
           {accounts.length === 0 ? (
             // Empty state
-            <div className="border border-dashed border-border rounded-2xl rounded-2xl shadow-[28px_28px_50px_rgba(0,0,0,0.15),_-23px_-23px_45px_rgba(255,255,255,0.8)] p-12 text-center">
+            <div className="glass rounded-3xl p-12 text-center">
               <div className="w-16 h-16 bg-foreground/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -188,7 +188,7 @@ export default function Dashboard() {
               </p>
               <button
                 onClick={handleAddGmail}
-                className="px-4 py-2 bg-foreground text-background rounded-md hover:opacity-90"
+                className="px-4 py-2 glass text-background rounded-xl hover:opacity-90"
               >
                 Add Email Account
               </button>
@@ -199,7 +199,7 @@ export default function Dashboard() {
               {accounts.map((account) => (
                 <div
                   key={account.id}
-                  className={`border border-border rounded-2xl p-4 flex items-center justify-between hover:border-foreground/50 
+                  className={`border glass rounded-2xl p-4 flex items-center justify-between
                     ${account.is_primary? 'bg-[linear-gradient(145deg,_#e6e6e6,_#ffffff)] shadow-[7px_7px_20px_#bebebe,-7px_-7px_20px_#ffffff]' : 
                     'shadow-[8px_8px_28px_#b8b8b8,-8px_-8px_28px_#ffffff]'}`}
                 >
@@ -218,7 +218,7 @@ export default function Dashboard() {
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{account.email_address}</span>
                         {account.is_primary && (
-                          <span className="text-xs bg-foreground text-background px-2 py-0.5 rounded">
+                          <span className="text-xs glass text-background p-2 rounded-full">
                             Primary
                           </span>
                         )}
@@ -264,12 +264,12 @@ export default function Dashboard() {
           <>
             {/* Backdrop */}
             <div
-              className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
+              className="fixed inset-0 z-40 bg-transparent backdrop-blur-sm"
               onClick={() => setRemovePanelOpen(false)}
             />
             
             {/* Slide-in panel */}
-            <div className="fixed top-0 right-0 z-50 h-screen w-full max-w-sm bg-background border-l border-border rounded-l-3xl shadow-2xl flex flex-col">
+            <div className="fixed top-0 right-0 z-50 h-screen w-full max-w-sm bg-transparent border-l border-border rounded-l-3xl backdrop-blur-lg shadow-2xl flex flex-col">
               {/* Header */}
               <div className="flex items-center justify-between px-6 py-4 border-b border-border flex-shrink-0">
                 <div>
@@ -298,7 +298,7 @@ export default function Dashboard() {
                   <button
                     key={account.id}
                     onClick={() => handleRemoveAccount(account.id)}
-                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-border hover:border-red-300 hover:bg-red-50 transition-colors group text-left"
+                    className="w-full flex items-center justify-between px-4 py-3 glass transition-colors group text-left"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center flex-shrink-0">
@@ -306,7 +306,7 @@ export default function Dashboard() {
                       </div>
                       <span className="text-sm truncate">{account.email_address}</span>
                     </div>
-                    <span className="text-xs text-red-500 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 ml-2">Remove</span>
+                    <span className="text-xs text-red-900 glass p-2 flex-shrink-0 ml-2">Remove</span>
                   </button>
                 ))}
               </div>
@@ -320,7 +320,7 @@ export default function Dashboard() {
           <div className="flex gap-3">
             <button
               onClick={handleGoToInbox}
-              className="px-6 py-3 bg-foreground text-background rounded-xl hover:opacity-90 font-medium"
+              className="px-6 py-3 glass rounded-2xl hover:opacity-90 font-medium"
             >
               Go to Inbox →
             </button>
@@ -329,13 +329,13 @@ export default function Dashboard() {
             <button
               onClick={handleSyncAll}
               disabled={syncing}
-              className="px-6 py-3 border border-border rounded-xl hover:bg-secondary disabled:opacity-50"
+              className="px-6 py-3 glass rounded-2xl hover:opacity-90 font-medium"
             >
               {syncing ? 'Syncing...' : 'Sync All Accounts'}
             </button>
 
 
-            <button className="px-6 py-3 border border-border rounded-xl text-[#ff0000] hover:text-foreground hover:bg-[#FFC2C2]"
+            <button className="px-6 py-3 glass rounded-2xl text-[#ff0000] hover:text-secondary-foreground hover:bg-[#FF4747]"
             onClick={handleRemoveAccountPanel}>
               Remove Accounts
             </button>
