@@ -9,143 +9,110 @@
 
 @layer base {
   :root {
-    --background: #ffffff;
-    --foreground: #ffffff;
-    
-    --foreground-black: #000000;
+    /* ── Core palette — dark theme, white text on dark/glass ── */
+    --background:            #0a0a0a;
+    --foreground:            #ffffff;
 
-    --composebg: #ffffff91;
+    --card:                  transparent;
+    --card-foreground:       #ffffff;
 
-    /* mail */
-    --mailbody: #ffffff;
-    --mailbody-title: #ffffff;
- 
-    --card: #ffffff;
-    --card-foreground: #0a0a0a;
- 
-    --popover: #ffffff;
-    --popover-foreground: #0a0a0a;
- 
-    --primary: #ffffff;
-    --primary-foreground: #ffffff;
- 
-    --secondary: #f5f5f5;
-    --secondary-foreground: #0a0a0a;
- 
-    --muted: #f5f5f5;
-    --muted-foreground: #fcfcfc;
- 
-    --accent: #f5f5f5;
-    --accent-foreground: #0a0a0a;
- 
-    --destructive: #ef4343;
-    --destructive-foreground: #ffffff;
- 
-    --border: #e5e5e5;
-    --input: #e5e5e5;
-    --ring: #0a0a0a;
- 
-    --radius: 0.375rem;
+    --popover:               #111111;
+    --popover-foreground:    #ffffff;
 
-    --red: #ff0000;
- 
-    --email-hover: #fafafa;
-    --email-selected: #f2f2f2;
- 
-    --badge-proposal-bg: #e8fdf3;
-    --badge-proposal: #1d8660;
-    --badge-followup-bg: #e6f1ff;
-    --badge-followup: #0661d0;
-    --badge-inquiry-bg: #f2e7fe;
-    --badge-inquiry: #6b26d9;
-    --badge-invoice-bg: #fef5dc;
-    --badge-invoice: #c76c05;
-    --badge-personal-bg: #fde8f2;
-    --badge-personal: #d22d80;
-    --badge-newsletter-bg: #eaedf1;
-    --badge-newsletter: #5a687c;
-    --badge-notification-bg: #ebecef;
-    --badge-notification: #6b7280;
-    --badge-amount-bg: #e0fbe9;
-    --badge-amount: #15843e;
-    --badge-deadline-bg: #feeadc;
-    --badge-deadline: #cc580b;
-    --badge-overdue-bg: #fcdede;
-    --badge-overdue: #c52020;
-    --badge-urgent-bg: #fef2dd;
-    --badge-urgent: #b87c14;
- 
-    --sidebar-background: #ffffff;
-    --sidebar-foreground: #0a0a0a;
-    --sidebar-primary: #0a0a0a;
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #f5f5f5;
-    --sidebar-accent-foreground: #0a0a0a;
-    --sidebar-border: #e5e5e5;
-    --sidebar-ring: #0a0a0a;
+    --primary:               #ffffff;
+    --primary-foreground:    #0a0a0a;
+
+    --secondary:             rgba(255,255,255,0.10);
+    --secondary-foreground:  #ffffff;
+
+    --muted:                 rgba(255,255,255,0.08);
+    --muted-foreground:      rgba(255,255,255,0.45);
+
+    --accent:                rgba(255,255,255,0.10);
+    --accent-foreground:     #ffffff;
+
+    --destructive:           #ef4343;
+    --destructive-foreground:#ffffff;
+
+    --border:                rgba(255,255,255,0.12);
+    --input:                 rgba(255,255,255,0.08);
+    --ring:                  rgba(255,255,255,0.30);
+
+    --radius:                0.375rem;
+    --red:                   #ff4444;
+
+    --mailbody:              rgba(255,255,255,0.75);
+    --mailbody-title:        #ffffff;
+
+    --email-hover:           rgba(255,255,255,0.06);
+    --email-selected:        rgba(255,255,255,0.12);
+
+    /* badges — keep as-is, they work on both themes */
+    --badge-proposal-bg: #13392b; --badge-proposal: #47d191;
+    --badge-followup-bg: #172c45; --badge-followup: #559ef6;
+    --badge-inquiry-bg:  #2a1c40; --badge-inquiry:  #a781e4;
+    --badge-invoice-bg:  #392813; --badge-invoice:  #f5b13d;
+    --badge-personal-bg: #401c2e; --badge-personal: #db70a6;
+    --badge-newsletter-bg:#272d35;--badge-newsletter:#8a96a8;
+    --badge-notification-bg:#292c32;--badge-notification:#89909f;
+    --badge-amount-bg:   #173622; --badge-amount:   #47d17a;
+    --badge-deadline-bg: #392213; --badge-deadline: #f08842;
+    --badge-overdue-bg:  #391313; --badge-overdue:  #e05252;
+    --badge-urgent-bg:   #392b13; --badge-urgent:   #e6ad4d;
+
+    --sidebar-background:        transparent;
+    --sidebar-foreground:        #ffffff;
+    --sidebar-primary:           #ffffff;
+    --sidebar-primary-foreground:#0a0a0a;
+    --sidebar-accent:            rgba(255,255,255,0.10);
+    --sidebar-accent-foreground: #ffffff;
+    --sidebar-border:            rgba(255,255,255,0.10);
+    --sidebar-ring:              rgba(255,255,255,0.30);
 
     /* ── Liquid Glass tokens ── */
-    /*
-      Apple's trick: near-zero fill + extreme brightness + high saturation.
-      brightness() lightens the blurred backdrop. saturate() punches the
-      background colors through. The fill rgba is almost nothing — just
-      enough surface to see. The border and inset-shadow are the main
-      visible edges, like a physical glass rim catching light.
-    */
-    /* ── Liquid Glass tokens ── */
-    --lg-blur:        blur(18px);
-    --lg-saturate:    saturate(150%);
-    --lg-brightness:  brightness(1.18);
-    /* --lg-distort: url(#lg-distort); — removed, too slow in practice */
+    --lg-blur:       blur(18px);
+    --lg-saturate:   saturate(150%);
+    --lg-brightness: brightness(1.18);
 
-    --lg-bg:          rgba(255, 255, 255, 0.06);
-    --lg-bg-hover:    rgba(255, 255, 255, 0.10);
-    --lg-bg-active:   rgba(255, 255, 255, 0.14);
-    --lg-bg-dark:     rgba(0,   0,   0,   0.18);
+    --lg-bg:         rgba(255,255,255,0.06);
+    --lg-bg-hover:   rgba(255,255,255,0.10);
+    --lg-bg-active:  rgba(255,255,255,0.15);
+    --lg-bg-dark:    rgba(0,0,0,0.35);
 
-    /* No solid border — replaced by inset glow system below */
-    --lg-border:       rgba(255, 255, 255, 0.0);
-    --lg-border-hover: rgba(255, 255, 255, 0.0);
+    --lg-border:       rgba(255,255,255,0.0);
+    --lg-border-hover: rgba(255,255,255,0.0);
 
-    /*
-      The "water droplet" edge system:
-      - A bright top-left catch light (where light hits first)
-      - A very faint bottom rim (shadow side of the droplet)
-      - A soft outer glow that simulates lens edge refraction
-      No hard border — only luminance transitions
-    */
     --lg-inset:
-      inset 0   1px  0   rgba(255, 255, 255, 0.55),
-      inset 0  -1px  0   rgba(255, 255, 255, 0.04),
-      inset 1px  0   0   rgba(255, 255, 255, 0.22),
-      inset -1px 0   0   rgba(0,   0,   0,   0.08),
-      0 0 0 0.5px rgba(255, 255, 255, 0.18);
+      inset 0   1px 0  rgba(255,255,255,0.55),
+      inset 0  -1px 0  rgba(255,255,255,0.04),
+      inset 1px  0  0  rgba(255,255,255,0.22),
+      inset -1px 0  0  rgba(0,0,0,0.08),
+      0 0 0 0.5px rgba(255,255,255,0.18);
 
     --lg-inset-hover:
-      inset 0   1px  0   rgba(255, 255, 255, 0.70),
-      inset 0  -1px  0   rgba(255, 255, 255, 0.06),
-      inset 1px  0   0   rgba(255, 255, 255, 0.30),
-      inset -1px 0   0   rgba(0,   0,   0,   0.06),
-      0 0 0 0.5px rgba(255, 255, 255, 0.28);
+      inset 0   1px 0  rgba(255,255,255,0.70),
+      inset 0  -1px 0  rgba(255,255,255,0.06),
+      inset 1px  0  0  rgba(255,255,255,0.30),
+      inset -1px 0  0  rgba(0,0,0,0.06),
+      0 0 0 0.5px rgba(255,255,255,0.28);
 
     --lg-shadow-sm:
-      0 2px 8px   rgba(0,0,0,0.18),
-      0 1px 2px   rgba(0,0,0,0.12),
+      0 2px 8px   rgba(0,0,0,0.28),
+      0 1px 2px   rgba(0,0,0,0.18),
       0 0 0 0.5px rgba(255,255,255,0.12);
     --lg-shadow-md:
-      0 4px 20px  rgba(0,0,0,0.22),
-      0 1px 4px   rgba(0,0,0,0.14),
+      0 4px 20px  rgba(0,0,0,0.35),
+      0 1px 4px   rgba(0,0,0,0.20),
       0 0 0 0.5px rgba(255,255,255,0.16);
     --lg-shadow-lg:
-      0 8px 32px  rgba(0,0,0,0.28),
-      0 2px 8px   rgba(0,0,0,0.16),
+      0 8px 32px  rgba(0,0,0,0.42),
+      0 2px 8px   rgba(0,0,0,0.22),
       0 0 0 0.5px rgba(255,255,255,0.20);
 
-    /* Subtle off-center glare — not centered, feels more organic */
     --lg-glare: radial-gradient(
       ellipse 70% 40% at 40% -10%,
-      rgba(255,255,255,0.30) 0%,
-      rgba(255,255,255,0.06) 45%,
+      rgba(255,255,255,0.28) 0%,
+      rgba(255,255,255,0.05) 45%,
       transparent 65%
     );
 
@@ -156,97 +123,7 @@
       transform    100ms ease;
   }
 
-  .dark {
-    --background: #0a0a0a;
-    --foreground: #fafafa;
- 
-    --card: #0a0a0a;
-    --card-foreground: #fafafa;
- 
-    --popover: #0a0a0a;
-    --popover-foreground: #fafafa;
- 
-    --primary: #fafafa;
-    --primary-foreground: #0a0a0a;
- 
-    --secondary: #262626;
-    --secondary-foreground: #fafafa;
- 
-    --muted: #262626;
-    --muted-foreground: #a3a3a3;
- 
-    --accent: #262626;
-    --accent-foreground: #fafafa;
- 
-    --destructive: #7c1d1d;
-    --destructive-foreground: #fafafa;
- 
-    --border: #333333;
-    --input: #333333;
-    --ring: #d4d4d4;
- 
-    --email-hover: #141414;
-    --email-selected: #1f1f1f;
- 
-    --badge-proposal-bg: #13392b;
-    --badge-proposal: #47d191;
-    --badge-followup-bg: #172c45;
-    --badge-followup: #559ef6;
-    --badge-inquiry-bg: #2a1c40;
-    --badge-inquiry: #a781e4;
-    --badge-invoice-bg: #392813;
-    --badge-invoice: #f5b13d;
-    --badge-personal-bg: #401c2e;
-    --badge-personal: #db70a6;
-    --badge-newsletter-bg: #272d35;
-    --badge-newsletter: #8a96a8;
-    --badge-notification-bg: #292c32;
-    --badge-notification: #89909f;
-    --badge-amount-bg: #173622;
-    --badge-amount: #47d17a;
-    --badge-deadline-bg: #392213;
-    --badge-deadline: #f08842;
-    --badge-overdue-bg: #391313;
-    --badge-overdue: #e05252;
-    --badge-urgent-bg: #392b13;
-    --badge-urgent: #e6ad4d;
- 
-    --sidebar-background: #0a0a0a;
-    --sidebar-foreground: #fafafa;
-    --sidebar-primary: #fafafa;
-    --sidebar-primary-foreground: #0a0a0a;
-    --sidebar-accent: #262626;
-    --sidebar-accent-foreground: #fafafa;
-    --sidebar-border: #333333;
-    --sidebar-ring: #d4d4d4;
-
-    /* ── dark-mode liquid glass token overrides ── */
-    --lg-bg:           rgba(255, 255, 255, 0.06);
-    --lg-bg-hover:     rgba(255, 255, 255, 0.10);
-    --lg-bg-active:    rgba(255, 255, 255, 0.14);
-    --lg-bg-dark:      rgba(0,   0,   0,   0.55);
-
-    --lg-border:       rgba(255, 255, 255, 0.10);
-    --lg-border-hover: rgba(255, 255, 255, 0.18);
-
-    --lg-inset:
-      inset 0  1px 0  rgba(255, 255, 255, 0.08),
-      inset 0 -1px 0  rgba(0,   0,   0,   0.30);
-
-    --lg-inset-hover:
-      inset 0  1px 0  rgba(255, 255, 255, 0.14),
-      inset 0 -1px 0  rgba(0,   0,   0,   0.25);
-
-    --lg-shadow-sm:    0 2px 8px  rgba(0,0,0,0.40), 0 1px 2px rgba(0,0,0,0.30);
-    --lg-shadow-md:    0 4px 16px rgba(0,0,0,0.50), 0 1px 3px rgba(0,0,0,0.35);
-    --lg-shadow-lg:    0 6px 20px rgba(0,0,0,0.55), 0 1px 4px rgba(0,0,0,0.40);
-
-    --lg-glare: radial-gradient(
-      ellipse 80% 45% at 50% 0%,
-      rgba(255,255,255,0.10) 0%,
-      transparent 70%
-    );
-  }
+  /* ── No .dark block — single unified dark theme ── */
 }
 
 @layer base {
@@ -265,21 +142,13 @@
   }
 
   body {
-    @apply text-foreground antialiased;
+    @apply bg-transparent text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
-  }
-
-  .font-outline {
-    -webkit-text-stroke-width: 1px;
-    -webkit-text-stroke-color: black;
-    -webkit-text-fill-color: transparent;
   }
 }
 
 @layer utilities {
-  .email-item {
-    @apply transition-colors duration-150 ease-out;
-  }
+  .email-item { @apply transition-colors duration-150 ease-out; }
   .email-item:hover    { background-color: var(--email-hover); }
   .email-item.selected { background-color: var(--email-selected); }
 
@@ -288,43 +157,12 @@
     min-width: 1.5rem;
   }
 
-  .scrollbar-thin {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
+  .scrollbar-thin { scrollbar-width: none; -ms-overflow-style: none; }
   .scrollbar-thin::-webkit-scrollbar { display: none; }
 
-  /* ─────────────────────────────────────────────────────────────────────
+  /* ─────────────────────────────────────────────────────
      LIQUID GLASS
-     
-     What makes this liquid glass (not glassmorphism):
-       1. url(#lg-distort) in backdrop-filter applies SVG feTurbulence +
-          feDisplacementMap — this physically warps what's behind the
-          element like a real glass lens. Glassmorphism only blurs.
-       2. Asymmetric inset shadows simulate the bright top-edge / dim
-          bottom-edge of a physical glass rim.
-       3. ::after specular highlight = the lens glare at the top.
-     
-     REQUIRED: <div id="lg-filters"> must exist once in your root HTML
-     (see the block at the very bottom of this file).
-  ───────────────────────────────────────────────────────────────────── */
-
-  /*
-    LIQUID GLASS
-    ─────────────────────────────────────────────────────────────
-    The water-droplet effect requires TWO layers of refraction:
-
-    Element itself  → base blur + brightness (whole surface, subtle)
-    ::before        → strong displacement filter masked to edges only
-                      this is what creates the "lens rim" refraction
-    ::after         → specular glare (off-center, organic)
-
-    The edge mask on ::before uses a CSS radial-gradient mask that
-    is opaque at the perimeter and transparent in the center — so
-    the heavy distortion only applies near the border, exactly like
-    a real convex water droplet or lens.
-    ─────────────────────────────────────────────────────────────
-  */
+  ───────────────────────────────────────────────────── */
 
   .glass {
     position: relative;
@@ -332,32 +170,19 @@
     overflow: hidden;
     border: none;
     outline: none;
-
     background: var(--lg-bg);
     border-radius: var(--lg-radius, 16px);
-
-    /* Layer 1: base frosted surface across the whole element */
-    backdrop-filter:
-      var(--lg-blur)
-      var(--lg-saturate)
-      var(--lg-brightness);
-    -webkit-backdrop-filter:
-      var(--lg-blur)
-      var(--lg-saturate)
-      var(--lg-brightness);
-
+    backdrop-filter:      var(--lg-blur) var(--lg-saturate) var(--lg-brightness);
+    -webkit-backdrop-filter: var(--lg-blur) var(--lg-saturate) var(--lg-brightness);
     box-shadow: var(--lg-inset), var(--lg-shadow-sm);
-
-    color: inherit;
+    color: #ffffff;
     transition: var(--lg-transition);
+    will-change: transform;
+    transform: translateZ(0);
+    contain: layout style;
   }
 
-  /* Layer 2: edge rim highlight — pure gradient, zero backdrop-filter.
-     A second backdrop-filter on ::before blurs content above it and
-     tanks performance (two GPU filter passes per element).
-     Instead: a masked radial gradient that brightens only the rim,
-     simulating the light-catch of a convex glass or water droplet.
-     GPU cost: essentially zero.                                         */
+  /* Edge rim highlight */
   .glass::before {
     content: '';
     position: absolute;
@@ -365,7 +190,6 @@
     border-radius: inherit;
     z-index: 1;
     pointer-events: none;
-
     background: radial-gradient(
       ellipse calc(100% - 2px) calc(100% - 2px) at 50% 50%,
       transparent 72%,
@@ -374,7 +198,7 @@
     );
   }
 
-  /* Layer 3: specular glare — off-center for organic feel */
+  /* Specular glare */
   .glass::after {
     content: '';
     position: absolute;
@@ -385,9 +209,10 @@
     z-index: 2;
   }
 
-  /* Radius passthrough — Tailwind rounded-* sets border-radius on the element,
-     but .glass uses var(--lg-radius, 16px). These bridge the two so you can
-     write class="glass rounded-2xl" and get the right radius everywhere.    */
+  /* Content always above pseudo-elements */
+  .glass > * { position: relative; z-index: 3; }
+
+  /* Radius passthrough for Tailwind rounded-* */
   .glass.rounded-sm,   .glass-black.rounded-sm   { --lg-radius: 0.125rem; }
   .glass.rounded,      .glass-black.rounded       { --lg-radius: 0.25rem;  }
   .glass.rounded-md,   .glass-black.rounded-md    { --lg-radius: 0.375rem; }
@@ -397,64 +222,41 @@
   .glass.rounded-3xl,  .glass-black.rounded-3xl   { --lg-radius: 1.5rem;   }
   .glass.rounded-full, .glass-black.rounded-full  { --lg-radius: 9999px;   }
 
-  /* Reset Tailwind's border-radius since we handle it via --lg-radius */
   .glass[class*="rounded"],
   .glass-black[class*="rounded"] {
     border-radius: var(--lg-radius, 16px) !important;
   }
 
-  /* CRITICAL: push all direct children above the ::before and ::after layers
-     so they are never blurred or obscured by the pseudo-elements           */
-  .glass > * {
-    position: relative;
-    z-index: 3;
-  }
-
-  /* Performance: promote to own GPU compositing layer, limit repaint scope */
-  .glass,
-  .glass-black {
-    will-change: transform;
-    transform: translateZ(0);
-    contain: layout style;
-  }
-
   .glass:hover {
-    background:  var(--lg-bg-hover);
-    box-shadow:  var(--lg-inset-hover), var(--lg-shadow-md);
+    background: var(--lg-bg-hover);
+    box-shadow: var(--lg-inset-hover), var(--lg-shadow-md);
   }
 
   .glass.selected {
-    background:  var(--lg-bg-active);
-    box-shadow:  var(--lg-inset-hover), var(--lg-shadow-lg);
+    background: var(--lg-bg-active);
+    box-shadow: var(--lg-inset-hover), var(--lg-shadow-lg);
   }
 
-  /* ── Dark variant ── */
+  /* ── Dark/black glass variant ── */
   .glass-black {
     position: relative;
     isolation: isolate;
     overflow: hidden;
     border: none;
-
     background: var(--lg-bg-dark);
     border-radius: var(--lg-radius, 16px);
-
-    backdrop-filter:
-      var(--lg-blur)
-      var(--lg-saturate)
-      var(--lg-brightness);
-    -webkit-backdrop-filter:
-      var(--lg-blur)
-      var(--lg-saturate)
-      var(--lg-brightness);
-
+    backdrop-filter:         var(--lg-blur) var(--lg-saturate) var(--lg-brightness);
+    -webkit-backdrop-filter: var(--lg-blur) var(--lg-saturate) var(--lg-brightness);
     box-shadow:
       inset 0  1px 0 rgba(255,255,255,0.20),
-      inset 0 -1px 0 rgba(0,  0,  0,  0.25),
+      inset 0 -1px 0 rgba(0,0,0,0.35),
       0 0 0 0.5px rgba(255,255,255,0.10),
-      0 4px 16px rgba(0,0,0,0.30);
-
-    color: inherit;
+      0 4px 16px rgba(0,0,0,0.40);
+    color: #ffffff;
     transition: var(--lg-transition);
+    will-change: transform;
+    transform: translateZ(0);
+    contain: layout style;
   }
 
   .glass-black::before {
@@ -464,7 +266,6 @@
     border-radius: inherit;
     z-index: 1;
     pointer-events: none;
-
     background: radial-gradient(
       ellipse calc(100% - 2px) calc(100% - 2px) at 50% 50%,
       transparent 72%,
@@ -480,7 +281,7 @@
     border-radius: inherit;
     background: radial-gradient(
       ellipse 70% 40% at 40% -10%,
-      rgba(255,255,255,0.12) 0%,
+      rgba(255,255,255,0.10) 0%,
       transparent 60%
     );
     pointer-events: none;
@@ -498,54 +299,27 @@
 }
 
 /*
-  ═══════════════════════════════════════════════════════════════════════
-  REQUIRED SVG FILTERS — paste this once inside <body> in index.html.
-
-  TWO filters now:
-    lg-distort      → subtle whole-surface warp (base layer)
-    lg-distort-edge → strong warp for edge-only ::before layer
-                      this is what creates the water-droplet rim effect
-  ═══════════════════════════════════════════════════════════════════════
+  SVG FILTERS — paste once in index.html before </body>
 
   <div id="lg-filters" aria-hidden="true"
        style="position:absolute;width:0;height:0;overflow:hidden;">
     <svg xmlns="http://www.w3.org/2000/svg">
       <defs>
-
-        <filter id="lg-distort"
-                x="-20%" y="-20%" width="140%" height="140%"
+        <filter id="lg-distort" x="-20%" y="-20%" width="140%" height="140%"
                 color-interpolation-filters="sRGB">
-          <feTurbulence
-            type="fractalNoise"
-            baseFrequency="0.65 0.75"
-            numOctaves="3"
-            seed="5"
-            result="noise" />
-          <feDisplacementMap
-            in="SourceGraphic" in2="noise"
-            scale="8"
-            xChannelSelector="R"
-            yChannelSelector="G" />
+          <feTurbulence type="fractalNoise" baseFrequency="0.65 0.75"
+            numOctaves="3" seed="5" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise"
+            scale="8" xChannelSelector="R" yChannelSelector="G" />
         </filter>
-
-        <filter id="lg-distort-edge"
-                x="-30%" y="-30%" width="160%" height="160%"
+        <filter id="lg-distort-edge" x="-30%" y="-30%" width="160%" height="160%"
                 color-interpolation-filters="sRGB">
-          <feTurbulence
-            type="fractalNoise"
-            baseFrequency="0.55 0.65"
-            numOctaves="4"
-            seed="8"
-            result="noise" />
-          <feDisplacementMap
-            in="SourceGraphic" in2="noise"
-            scale="28"
-            xChannelSelector="R"
-            yChannelSelector="G" />
+          <feTurbulence type="fractalNoise" baseFrequency="0.55 0.65"
+            numOctaves="4" seed="8" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise"
+            scale="28" xChannelSelector="R" yChannelSelector="G" />
         </filter>
-
       </defs>
     </svg>
   </div>
-
 */

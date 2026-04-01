@@ -76,6 +76,9 @@ export function ComposeModal({ isOpen, onClose, initData }: ComposeModalProps) {
     }
   };
 
+  /* Shared input style — transparent bg, white text, no border, monospace */
+  const inputCls = "w-full bg-transparent text-white text-sm focus:outline-none placeholder:text-white/30";
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -87,62 +90,44 @@ export function ComposeModal({ isOpen, onClose, initData }: ComposeModalProps) {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="md:hidden fixed inset-0 z-50 bg-background flex flex-col"
+            className="md:hidden fixed inset-0 z-50 flex flex-col"
+            style={{ background: "rgba(10,10,10,0.92)", backdropFilter: "blur(24px)" }}
             onKeyDown={handleKeyDown}
           >
-            {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border flex-shrink-0">
-              <button onClick={handleClose} className="p-1 hover:bg-secondary rounded transition-colors text-muted-foreground hover:text-foreground">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 flex-shrink-0">
+              <button onClick={handleClose} className="p-1 rounded transition-colors text-white/50 hover:text-white">
                 <X className="w-5 h-5" />
               </button>
-              <span className="text-sm font-medium">{initData?.to ? "Reply" : "New Message"}</span>
+              <span className="text-sm font-medium text-white">{initData?.to ? "Reply" : "New Message"}</span>
               <button
                 onClick={handleSend}
                 disabled={sending}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-foreground text-background rounded-md text-sm font-medium hover:bg-foreground/90 disabled:opacity-60"
+                className="flex items-center gap-1.5 px-3 py-1.5 glass rounded-lg text-sm font-medium disabled:opacity-60"
               >
                 {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 Send
               </button>
             </div>
-
-            {/* Form */}
             <div className="flex flex-col flex-1 min-h-0 px-4 pt-2">
-              <div className="flex items-center border-b border-border py-3">
-                <label className="text-sm text-muted-foreground w-16 shrink-0">To</label>
-                <input
-                  ref={toRef}
-                  type="email"
-                  value={to}
+              <div className="flex items-center border-b border-white/10 py-3">
+                <label className="text-sm text-white/40 w-16 shrink-0">To</label>
+                <input ref={toRef} type="email" value={to}
                   onChange={e => { setTo(e.target.value); setError(null); }}
-                  className="flex-1 bg-transparent text-sm focus:outline-none"
-                  placeholder="recipient@example.com"
-                  disabled={sending}
-                />
+                  className={inputCls} placeholder="recipient@example.com" disabled={sending} />
               </div>
-              <div className="flex items-center border-b border-border py-3">
-                <label className="text-sm text-muted-foreground w-16 shrink-0">Subject</label>
-                <input
-                  type="text"
-                  value={subject}
+              <div className="flex items-center border-b border-white/10 py-3">
+                <label className="text-sm text-white/40 w-16 shrink-0">Subject</label>
+                <input type="text" value={subject}
                   onChange={e => { setSubject(e.target.value); setError(null); }}
-                  className="flex-1 bg-transparent text-sm focus:outline-none"
-                  placeholder="Subject"
-                  disabled={sending}
-                />
+                  className={inputCls} placeholder="Subject" disabled={sending} />
               </div>
-              <textarea
-                ref={bodyRef}
-                value={body}
+              <textarea ref={bodyRef} value={body}
                 onChange={e => { setBody(e.target.value); setError(null); }}
-                className="flex-1 w-full bg-transparent text-sm focus:outline-none resize-none pt-3 pb-2"
-                placeholder="Compose your message…"
-                disabled={sending}
-              />
+                className={`${inputCls} flex-1 resize-none pt-3 pb-2`}
+                placeholder="Compose your message…" disabled={sending} />
               {error && (
-                <div className="flex items-center gap-2 pb-2 text-xs text-red-600 dark:text-red-400 shrink-0">
-                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                  <span>{error}</span>
+                <div className="flex items-center gap-2 pb-2 text-xs text-red-400 shrink-0">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0" /><span>{error}</span>
                 </div>
               )}
             </div>
@@ -152,81 +137,99 @@ export function ComposeModal({ isOpen, onClose, initData }: ComposeModalProps) {
           <motion.div
             key="desktop-compose"
             initial={{ opacity: 0, y: 50, scale: 0.95 }}
-            animate={{
-              opacity: 1,
-              y: isMinimized ? "calc(100vh - 48px)" : 0,
-              scale: 1,
-            }}
+            animate={{ opacity: 1, y: isMinimized ? "calc(100vh - 48px)" : 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="hidden md:flex md:flex-col fixed bottom-4 right-4 w-[560px] h-[520px] bg-background backdrop-blur-xl border border-border rounded-2xl shadow-2xl z-50 overflow-hidden"
+            className="hidden md:flex md:flex-col fixed bottom-4 right-4 w-[520px] h-[480px] rounded-2xl z-50 overflow-hidden"
+            style={{
+              background: "rgba(12, 12, 12, 0.82)",
+              backdropFilter: "blur(28px) saturate(150%) brightness(0.9)",
+              WebkitBackdropFilter: "blur(28px) saturate(150%) brightness(0.9)",
+              boxShadow: `
+                inset 0  1px 0 rgba(255,255,255,0.18),
+                inset 0 -1px 0 rgba(255,255,255,0.04),
+                0 0 0 0.5px rgba(255,255,255,0.14),
+                0 24px 60px rgba(0,0,0,0.60),
+                0  8px 20px rgba(0,0,0,0.40)
+              `
+            }}
             onKeyDown={handleKeyDown}
           >
-            {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 bg-secondary/50 border-b border-border flex-shrink-0">
-              <span className="text-sm font-medium">{initData?.to ? "Reply" : "New Message"}</span>
+            {/* Header bar */}
+            <div className="flex items-center justify-between px-4 py-3 flex-shrink-0"
+              style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+              <span className="text-sm font-medium text-white">
+                {initData?.to ? "Reply" : "New Message"}
+              </span>
               <div className="flex items-center gap-1">
-                <button onClick={() => setIsMinimized(m => !m)} className="p-1 hover:bg-secondary rounded transition-colors text-muted-foreground hover:text-foreground" title={isMinimized ? "Restore" : "Minimise"}>
+                <button
+                  onClick={() => setIsMinimized(m => !m)}
+                  className="p-1.5 rounded-md transition-colors text-white/40 hover:text-white hover:bg-white/08"
+                  title={isMinimized ? "Restore" : "Minimise"}
+                >
                   <Minus className="w-4 h-4" />
                 </button>
-                <button className="p-1 hover:bg-secondary rounded transition-colors text-muted-foreground hover:text-foreground" title="Expand (coming soon)">
+                <button className="p-1.5 rounded-md transition-colors text-white/40 hover:text-white hover:bg-white/08" title="Expand">
                   <Maximize2 className="w-4 h-4" />
                 </button>
-                <button onClick={handleClose} className="p-1 hover:bg-secondary rounded transition-colors text-muted-foreground hover:text-foreground" title="Close">
+                <button onClick={handleClose} className="p-1.5 rounded-md transition-colors text-white/40 hover:text-white hover:bg-white/08" title="Close">
                   <X className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
             {!isMinimized && (
-              <div className="flex flex-col flex-1 min-h-0 px-4 pt-4">
-                <div className="flex items-center border-b border-border pb-3 mb-3 shrink-0">
-                  <label className="text-sm text-muted-foreground w-16 shrink-0">To</label>
-                  <input
-                    ref={toRef}
-                    type="email"
-                    value={to}
+              <div className="flex flex-col flex-1 min-h-0 px-5 pt-4">
+                {/* To */}
+                <div className="flex items-center py-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+                  <label className="text-xs text-white/35 w-16 shrink-0 uppercase tracking-wider">To</label>
+                  <input ref={toRef} type="email" value={to}
                     onChange={e => { setTo(e.target.value); setError(null); }}
-                    className="flex-1 bg-transparent text-sm focus:outline-none"
-                    placeholder="recipient@example.com"
-                    disabled={sending}
-                  />
+                    className={inputCls} placeholder="recipient@example.com" disabled={sending} />
                 </div>
-                <div className="flex items-center border-b border-border pb-3 mb-3 shrink-0">
-                  <label className="text-sm text-muted-foreground w-16 shrink-0">Subject</label>
-                  <input
-                    type="text"
-                    value={subject}
+
+                {/* Subject */}
+                <div className="flex items-center py-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+                  <label className="text-xs text-white/35 w-16 shrink-0 uppercase tracking-wider">Subject</label>
+                  <input type="text" value={subject}
                     onChange={e => { setSubject(e.target.value); setError(null); }}
-                    className="flex-1 bg-transparent text-sm focus:outline-none"
-                    placeholder="Subject"
-                    disabled={sending}
-                  />
+                    className={inputCls} placeholder="Subject" disabled={sending} />
                 </div>
-                <textarea
-                  ref={bodyRef}
-                  value={body}
+
+                {/* Body */}
+                <textarea ref={bodyRef} value={body}
                   onChange={e => { setBody(e.target.value); setError(null); }}
-                  className="flex-1 w-full bg-transparent text-sm focus:outline-none resize-none pb-2"
+                  className={`${inputCls} flex-1 resize-none py-4 leading-relaxed`}
                   placeholder="Compose your message… (Ctrl+Enter to send)"
-                  disabled={sending}
-                />
+                  disabled={sending} />
+
                 {error && (
-                  <div className="flex items-center gap-2 pb-2 text-xs text-red-600 dark:text-red-400 shrink-0">
-                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                    <span>{error}</span>
+                  <div className="flex items-center gap-2 pb-2 text-xs text-red-400 shrink-0">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" /><span>{error}</span>
                   </div>
                 )}
 
-                <div className="flex items-center justify-between py-3 border-t border-border shrink-0">
+                {/* Footer */}
+                <div className="flex items-center justify-between py-3 flex-shrink-0"
+                  style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
                   <button
                     onClick={handleSend}
                     disabled={sending}
-                    className="flex items-center gap-2 px-4 py-2 bg-foreground text-background rounded-md text-sm font-medium hover:bg-foreground/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                    style={{
+                      background: "rgba(255,255,255,0.12)",
+                      boxShadow: "inset 0 1px 0 rgba(255,255,255,0.20), 0 0 0 0.5px rgba(255,255,255,0.12)"
+                    }}
                   >
-                    {sending ? <><Loader2 className="w-4 h-4 animate-spin" />Sending…</> : <><Send className="w-4 h-4" />Send</>}
+                    {sending
+                      ? <><Loader2 className="w-4 h-4 animate-spin" />Sending…</>
+                      : <><Send className="w-4 h-4" />Send</>}
                   </button>
-                  <button onClick={handleClose} disabled={sending} className="px-4 py-2 text-muted-foreground hover:text-foreground text-sm transition-colors disabled:opacity-50">
+                  <button
+                    onClick={handleClose}
+                    disabled={sending}
+                    className="px-3 py-2 text-white/35 hover:text-white/70 text-sm transition-colors disabled:opacity-50"
+                  >
                     Discard
                   </button>
                 </div>
