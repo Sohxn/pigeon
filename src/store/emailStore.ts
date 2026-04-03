@@ -169,6 +169,12 @@ export const useEmailStore = create<EmailState>()(
         case 'starred':
           filtered = filtered.filter(e => e.is_starred && !e.is_trashed);
           break;
+        case 'sent':
+          filtered = filtered.filter(e => e.labels?.includes('SENT') && !e.is_trashed);
+          break;
+        case 'drafts':
+          filtered = [];
+          break;
         case 'archive':
           filtered = filtered.filter(e => e.is_archived && !e.is_trashed);
           break;
@@ -197,7 +203,7 @@ export const useEmailStore = create<EmailState>()(
       return {
         inbox: filtered.filter(e => !e.is_archived && !e.is_trashed && !e.is_read).length,
         starred: filtered.filter(e => e.is_starred && !e.is_trashed).length,
-        sent: 0, // Not implemented yet
+        sent: filtered.filter(e => e.labels?.includes('SENT') && !e.is_trashed).length,
         drafts: 0, // Not implemented yet
         archive: filtered.filter(e => e.is_archived && !e.is_trashed).length,
         trash: filtered.filter(e => e.is_trashed).length,

@@ -48,6 +48,8 @@ export default function Index() {
     switch (activeFolder) {
       case "inbox":   filtered = filtered.filter(e => !e.is_archived && !e.is_trashed); break;
       case "starred": filtered = filtered.filter(e => e.is_starred && !e.is_trashed); break;
+      case "sent":    filtered = filtered.filter(e => e.labels?.includes("SENT") && !e.is_trashed); break;
+      case "drafts":  filtered = []; break;
       case "archive": filtered = filtered.filter(e => e.is_archived && !e.is_trashed); break;
       case "trash":   filtered = filtered.filter(e => e.is_trashed); break;
     }
@@ -64,11 +66,24 @@ export default function Index() {
     return {
       inbox:   base.filter(e => !e.is_archived && !e.is_trashed && !e.is_read).length,
       starred: base.filter(e => e.is_starred && !e.is_trashed).length,
-      sent: 0, drafts: 0,
+      sent: base.filter(e => e.labels?.includes("SENT") && !e.is_trashed).length,
+      drafts: 0,
       archive: base.filter(e => e.is_archived && !e.is_trashed).length,
       trash:   base.filter(e => e.is_trashed).length,
     };
   }, [allEmails, selectedAccountId]);
+
+  useEffect(() => {
+    if (emails.length === 0) {
+      if (selectedEmailId !== null) setSelectedEmailId(null);
+      return;
+    }
+
+    const hasSelectedInCurrentFolder = emails.some(e => e.id === selectedEmailId);
+    if (!hasSelectedInCurrentFolder) {
+      setSelectedEmailId(emails[0].id);
+    }
+  }, [emails, selectedEmailId, setSelectedEmailId]);
 
   useEffect(() => {
     if (authLoading) return;
