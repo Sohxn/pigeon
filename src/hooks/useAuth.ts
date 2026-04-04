@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import * as api from '@/services/apiClient';
+import { useEmailStore } from '@/store/emailStore';
 
 // dev mode
 import { isDev, devUser } from '@/lib/devMode';
@@ -16,6 +17,7 @@ export function useAuth() {
   const [user, setUser] = useState<any>(isDev? devUser : null);
   const [loading, setLoading] = useState(!isDev); // Add loading state
   const navigate = useNavigate();
+  const resetEmailStore = useEmailStore(state => state.resetStore);
   
   // Check if user is logged in on mount
   useEffect(() => {
@@ -50,6 +52,7 @@ export function useAuth() {
   
   const signOut = async () => {
     await api.signOut();
+    resetEmailStore();
     navigate('/login');
   };
   

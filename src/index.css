@@ -133,7 +133,7 @@
 
   html {
     font-family: "Roboto Mono", monospace;
-    background-image: url('../public/wallpaper/liquid_colour.png');
+    background-image: url('../wallpaper/liquid_colour.png');
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
