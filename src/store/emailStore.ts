@@ -11,7 +11,6 @@
 
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import { persist, createJSONStorage } from 'zustand/middleware';
 
 // ============================================================
 // TYPES - Define what our data looks like
@@ -80,7 +79,6 @@ interface EmailState {
   setLoading: (loading: boolean) => void;
   setSyncing: (syncing: boolean) => void;
   setError: (error: string | null) => void;
-  resetStore: () => void;
   
   // Email Operations
   markEmailAsRead: (emailId: string) => void;
@@ -99,7 +97,6 @@ interface EmailState {
 // ============================================================
 
 export const useEmailStore = create<EmailState>()(
-  persist(
   immer((set, get) => ({
     // Initial state
     accounts: [],
@@ -120,16 +117,6 @@ export const useEmailStore = create<EmailState>()(
     setLoading: (loading) => set({ isLoading: loading }),
     setSyncing: (syncing) => set({ isSyncing: syncing }),
     setError: (error) => set({ error }),
-    resetStore: () => set({
-      accounts: [],
-      emails: [],
-      selectedEmailId: null,
-      selectedAccountId: null,
-      activeFolder: 'inbox',
-      isLoading: false,
-      isSyncing: false,
-      error: null,
-    }),
     
     // Email operations - modify email state
     markEmailAsRead: (emailId) => 
@@ -222,17 +209,5 @@ export const useEmailStore = create<EmailState>()(
         trash: filtered.filter(e => e.is_trashed).length,
       };
     },
-  })),
-  {
-    name: 'pigeon-email-store',
-    storage: createJSONStorage(() => localStorage),
-    partialize: (state) => ({
-      accounts: state.accounts,
-      emails: state.emails,
-      selectedEmailId: state.selectedEmailId,
-      selectedAccountId: state.selectedAccountId,
-      activeFolder: state.activeFolder,
-    }),
-  }
-)
+  }))
 );

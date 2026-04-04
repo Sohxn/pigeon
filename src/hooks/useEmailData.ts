@@ -19,8 +19,6 @@ export function useEmailData() {
    * Called on initial page load
    */
   const loadData = async () => {
-    const hasCachedEmails = store.emails.length > 0;
-
     // dev mode
     if(isDev){
       store.setEmails(mockEmails);
@@ -48,10 +46,7 @@ export function useEmailData() {
     
     
     try {
-      // Only show full-screen loading when we have nothing to render yet.
-      if (!hasCachedEmails) {
-        store.setLoading(true);
-      }
+      store.setLoading(true);
       store.setError(null);
       
       // Check if user is authenticated first
